@@ -7,6 +7,6 @@ QUnit.test("test ripping with CS1101S (Sem 1, 2010/2011) (cached)", function() {
 		QUnit.start();
 		QUnit.ok(true, "fetched module info (cached)");
 		var module = tt.module[pos];
-		QUnit.equals("CS1101S", module.code, "check module code");
+		QUnit.equals(module.code, "CS1101S", "check module code");
 	});
 });

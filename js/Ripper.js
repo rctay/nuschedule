@@ -71,7 +71,8 @@ Ripper.prototype.rip = function() {
 	//give ripper's url to current url
 	this.url = url;
 	if (code != ''){ //if not empty, do ripping
-		$.get(this.url, (function(_ripper) { return function(data) {
+		var _ripper = this;
+		$.get(this.url, function(data) {
 			if (data.indexOf("Module Detailed Information for") != -1) {
 				// set the sPage
 				_ripper.sPage = data;
@@ -82,7 +83,7 @@ Ripper.prototype.rip = function() {
 				$('#img'+_ripper.rip_index).attr('src',imgError.src);
 			}
 			_ripper.ripNext();
-		}})(this));
+		});
 	} else {
 		$('#img'+this.rip_index).attr('src', imgBlank.src);
 		this.ripNext();

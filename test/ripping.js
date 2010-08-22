@@ -5,7 +5,8 @@ QUnit.test("test ripping with CS1101S (Sem 1, 2010/2011) (cached)", function() {
 	QUnit.stop(1000);
 	NUSchedule.signals.register("on_module_rip_success", function() {
 		QUnit.start();
+		QUnit.ok(true, "fetched module info (cached)");
 		var module = tt.module[pos];
-		QUnit.equals("CS1101S", module.code, "fetched module info (cached)");
+		QUnit.equals("CS1101S", module.code, "check module code");
 	});
 });

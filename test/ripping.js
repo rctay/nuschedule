@@ -6,7 +6,21 @@ QUnit.test("test ripping with CS1101S (Sem 1, 2010/2011) (cached)", function() {
 	NUSchedule.signals.register("on_module_rip_success", function() {
 		QUnit.start();
 		QUnit.ok(true, "fetched module info (cached)");
+
 		var module = tt.module[pos];
 		QUnit.equals(module.code, "CS1101S", "check module code");
+		QUnit.equals(module.exam, "29-11-2010", "check exam date");
+		QUnit.equals(module.lecture.length, 1, "check lecture group count");
+
+		var lecture = module.lecture[0];
+		QUnit.ok(lecture, "retrieve lecture session");
+		QUnit.equals(lecture.type, "lec", "check Part type");
+		QUnit.equals(lecture.session.length, 2, "check lecture session count");
+
+		var session = lecture.session[0];
+		QUnit.same(
+			[session.day, session.start, session.end, session.type, session.place],
+			[3, 1000, 1200, 0, "LT15"],
+			"check lecture session 1");
 	});
 });

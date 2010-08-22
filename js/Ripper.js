@@ -42,7 +42,7 @@ Ripper.prototype.start = function() {
 		$('#nextButton').hide();
 		this._foreach_module_field(function(i, field) {
 			if (field.val() != '') {
-				$('#img'+i).attr('src', imgLoader.src);
+				NUSchedule.signals.send("on_module_rip_start", i);
 			}
 		});
 
@@ -68,9 +68,9 @@ Ripper.prototype._send_request = function(url) {
 			_ripper.sPage = data;
 			_ripper.$page = $(data);
 			_ripper.getModule();
-			$('#img'+_ripper.rip_index).attr('src',imgOK.src);
+			NUSchedule.signals.send("on_module_rip_success", _ripper.rip_index);
 		}else{
-			$('#img'+_ripper.rip_index).attr('src',imgError.src);
+			NUSchedule.signals.send("on_module_rip_error", _ripper.rip_index);
 		}
 		_ripper.ripNext();
 	});
@@ -95,7 +95,7 @@ Ripper.prototype.rip = function() {
 	if (code != ''){ //if not empty, do ripping
 		this._send_request(url);
 	} else {
-		$('#img'+this.rip_index).attr('src', imgBlank.src);
+		NUSchedule.signals.send("on_module_rip_blank", this.rip_index);
 		this.ripNext();
 	}
 };

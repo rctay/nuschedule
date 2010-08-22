@@ -12,21 +12,39 @@ Ripper.prototype.testApplication = function() {
 	this.auto_start = true;
 };
 
+/*
+ * For each #code<n> field, call 'func' with
+ *
+ *  - the current count (n), and
+ *  - the field passed to it (as a jQuery object).
+ *
+ * Iteration is stopped when 'func' returns true.
+ */
+Ripper.prototype._foreach_module_field = function(func) {
+	for (var i=1; i<=this.MAX_RIP_INDEX; i++) {
+		if (func(i, $('#code'+i))) {
+			break;
+		}
+	}
+}
+
 Ripper.prototype.start = function() {
 
 	//checking if one of them is not blank
 	var proceed = false;
-	for (ri=1;ri<=this.MAX_RIP_INDEX;ri++) {
-		if ($('#code'+ri).val() != ''){ //not empty
-			proceed = true; break;
+	this._foreach_module_field(function(i, field) {
+		if (field.val() != '') {
+			return proceed = true;
 		}
-	}
+	});
 	if (proceed) {
 		$('#ripButton').val('Waiting...').mouseup(function() { return false; });
 		$('#nextButton').hide();
-		for (i=1;i<=this.MAX_RIP_INDEX;i++) {
-			if ($('#code'+i).val() != '') $('#img'+i).attr('src', imgLoader.src);
-		}
+		this._foreach_module_field(function(i, field) {
+			if (field.val() != '') {
+				$('#img'+i).attr('src', imgLoader.src);
+			}
+		});
 
 		//start ripping.
 		this.rip_index = 1;

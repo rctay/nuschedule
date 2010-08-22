@@ -1,16 +1,16 @@
 //http://localhost:8888/timetable/readModule.php?url=http://localhost:8888/timetable/m/cs2100.htm
 var ripIndex;
-var autoStart = false;
 function Ripper() {
 	this.MAX_RIP_INDEX = 12;
 
 	this.url = '';
 	this.sPage = '';
+	this.auto_start = false;
 };
 
 Ripper.prototype.testApplication = function() {
-	if (! autoStart) this.start();
-	autoStart = true;
+	if (! this.auto_start) this.start();
+	this.auto_start = true;
 };
 
 Ripper.prototype.start = function() {
@@ -231,7 +231,7 @@ Ripper.prototype.ripNext = function() {
 			//show NEXT button if module>0
 			$("#nextButton").show();
 		}
-		if (autoStart) {
+		if (this.auto_start) {
 			tt.createTable();tt.createAllNode();st.showSetFunctions();showPage3();
 			setTimeout("alert('Here you are. Happy testing! :)')", 900);
 		}

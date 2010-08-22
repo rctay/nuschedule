@@ -77,9 +77,9 @@ Ripper.prototype.rip = function() {
 				_ripper.sPage = data;
 				_ripper.$page = $(data);
 				_ripper.getModule();
-				$('#img'+this.rip_index).attr('src',imgOK.src);
+				$('#img'+_ripper.rip_index).attr('src',imgOK.src);
 			}else{
-				$('#img'+this.rip_index).attr('src',imgError.src);
+				$('#img'+_ripper.rip_index).attr('src',imgError.src);
 			}
 			_ripper.ripNext();
 		}})(this));

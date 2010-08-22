@@ -14,9 +14,9 @@
     <script src="js/TimeTable.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/Set.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/Main.js" type="text/javascript" charset="utf-8"></script>
-    
+
     <script src="js/Dragger.js" type="text/javascript" charset="utf-8"></script>
-    
+
     <script>
     tempLink = ['','AR1102', 'AR2223', 'BE1000', 'BFS1001', 'CS1101', 'CS2100', '','','','','',''];
 	function ripInto() {
@@ -26,7 +26,7 @@
 	}
     </script>
 
-    
+
 </head>
 <body onload="st.renderSetRow();" onunload="return false">
     <div id="status"><p id="stat0">ready</p></div>
@@ -58,12 +58,12 @@
 			</div>
 
         </div>
-    
+
         <div id="page2">
 	<div style="width:800px;margin:0 auto;">
             <h4><b>Step 1:</b> Add module by module code</h4>
             <h6 style="margin-bottom:10px;">Please provide module codes that you want to add, max 12</h6>
-            
+
             <p style="margin-bottom:10px;color:#f33;">Look Here! <a href="javascript://" onclick="ripInto();ripper.testApplication();">Just wanna test this application? Click here.</a> (I will fill some example for you to play with)</p>
 
 			<script type="text/javascript">
@@ -81,13 +81,13 @@
 	            	<h4><b>Step 2:</b> Ripping button</h4>
 	            	<h6 style="margin-bottom:10px;">Click <span style="color:#fff">Start Ripping</span> when you have done.<br/>Click <span style="color:#fff">Next</span> if you are ready to start the application, or click <span style="color:#fff">Re-Scan All</span> if you want to re-scan any invalid links</h6>
 
-            
+
 	            	<p><input type="button" id="ripButton" onmouseup="ripper.start()" value="Start Ripping" class="button" />
 	                <input type="button" id="nextButton" onclick="tt.createTable();tt.createAllNode();st.showSetFunctions();showPage3();this.onclick=''" value="Next" class="button" style="display:none" /></p>
 				</div>
 			</div>
         </div>
-        
+
         <div id="page3">
             <div id="content">
                 <h4><b>Step 3:</b> What you have to know</h4>
@@ -101,8 +101,8 @@
 
         </div>
     </div>
-    
-    
+
+
     <div id="wrapper"><div id="master"></div></div>
     <div id="footer"><p>This application was created by Lionel Chan. Victor Loh and Colin Tan has also contributed to this project. Chris Chua is currently making changes to the script. <br/>The modules shown here are not guaranteed to be 100% correct. Use at your own risk</p></div>
 </body>

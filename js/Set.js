@@ -1,6 +1,6 @@
 function Set() {
 	this.maxSlot = 3;
-	
+
 	this.ripModule = new Array();
 	this.ripIndex = 0; //for ripping purpose, advance 1 by 1
 	this.ripMax = 0; //hold the current number of modules
@@ -9,7 +9,7 @@ function Set() {
 };
 
 Set.prototype.load = function(setId){
-	
+
 	if (confirm('Confirm to load previously saved timetable to current table?\n\nCurrent timetable will be discarded')){
 		setRowFunction = document.getElementById('setRow_function'+setId);
 		$('#master').fadeOut(200);
@@ -22,7 +22,7 @@ Set.prototype.load = function(setId){
 		this.onTableArray = this.getOnTableArray(setId);
 		this.rip(); //start ripping!
 	}
-	
+
 };
 
 Set.prototype.rip = function() {
@@ -31,12 +31,12 @@ Set.prototype.rip = function() {
 };
 
 Set.prototype.save = function(setId) {
-	
+
 	if (confirm('Save current timetable into slot #'+(setId+1)+'?')){
 		this.saveCookie(setId);
 		this.updateFunctions(setId);
 	}
-	
+
 };
 
 Set.prototype.remove = function(setId) {
@@ -71,12 +71,12 @@ Set.prototype.aSave = function(setId) {
 };
 
 Set.prototype.updateFunctions = function(setId) {
-	
+
 	setRowFunction = document.getElementById('setRow_function'+setId);
-	
+
 	//remove all nodes first
 	while(setRowFunction.hasChildNodes()) setRowFunction.removeChild(setRowFunction.lastChild);
-	
+
 	//render three buttons...
 	arrModuleCode = this.readModuleCode(setId);
 	if (arrModuleCode.length > 0) {
@@ -86,7 +86,7 @@ Set.prototype.updateFunctions = function(setId) {
 	}else{
 		setRowFunction.appendChild(this.aSave(setId)); //and append a save button
 	}
-	
+
 };
 
 Set.prototype.renderSetRow = function(){
@@ -99,7 +99,7 @@ Set.prototype.renderSetRow = function(){
 		img1.setAttribute('src', imgDatabase.src);
 		span = document.createElement('span');
 		span.id = 'setRow_function'+i;
-		
+
 		arrModuleCode = this.readModuleCode(i);
 		if (arrModuleCode.length > 0) span.appendChild(this.aLoad(i, arrModuleCode));
 
@@ -165,7 +165,7 @@ Set.prototype.ripOnTableArray = function() {
 	str = str.replace(/_lec_/g, 'h');
 	str = str.replace(/_tut_/g, 'o');
 	str = str.replace(/_lab_/g, 'j');
-	return str;	
+	return str;
 };
 
 Set.prototype.getOnTableArray = function(setId) {
@@ -248,7 +248,7 @@ Set.prototype.compressModuleViewer = function(data) {
 	data = data.replace(/\<\/div\>\<\/div\>\<\/div\>/g, 'zp');
 	data = data.replace(/\<\/div\>\<\/div\>\<div style="position:relative"\>\<div id="k_/g, 'zr');
 	data = data.replace(/" class="module_node_1" style="top:/g, 'zs');
-	
+
 	return data;
 }
 Set.prototype.decompressModuleViewer = function(data) {
@@ -269,7 +269,7 @@ Set.prototype.decompressModuleViewer = function(data) {
 	data = data.replace(/zc/g, 'px;"><div class="colorChooser" style="background-color:#');
 	data = data.replace(/zb/g, 'px;left:');
 	data = data.replace(/za/g, '<div class="module" style="top:');
-	
+
 	return data;
 }
 Set.prototype.decompressNodeMaster = function(data) {
@@ -306,7 +306,7 @@ Set.prototype.decompressNodeMaster = function(data) {
 
 Set.prototype.request = function(url) {
 	$.get(url, function(data) {
-		
+
 		if (/Module Detailed Information for/i.test(data)) {
 			ripper.sPage = data;
 			ripper.getModule();
@@ -315,7 +315,7 @@ Set.prototype.request = function(url) {
 			}else{
 				$('#page1').fadeOut(300);
 				$('#page2').fadeOut(300);
-				
+
 				setTimeout(function() {
 					if (!document.getElementById('tableMaster')) {
 						tt.createTable();
@@ -325,34 +325,34 @@ Set.prototype.request = function(url) {
 					$('#page3').fadeIn(200);
 					$('#master').fadeIn(200);
 				}, 500);
-			}	
+			}
 		}
 	});
 };
 
 
-function setCookie(sName, sValue, oExpires, sPath, sDomain, bSecure) { 
+function setCookie(sName, sValue, oExpires, sPath, sDomain, bSecure) {
 	var sCookie = sName + "=" + encodeURIComponent(sValue);
-	if (oExpires) { 
-		sCookie += "; expires=" + oExpires.toGMTString(); 
-	} 
-	if (sPath) { 
-		sCookie += "; path=" + sPath; 
-	} 
-	if (sDomain) { 
-		sCookie += "; domain=" + sDomain; 
-	} 
-	if (bSecure) { 
-		sCookie += "; secure"; 
-	} 
-	document.cookie = sCookie; 
+	if (oExpires) {
+		sCookie += "; expires=" + oExpires.toGMTString();
+	}
+	if (sPath) {
+		sCookie += "; path=" + sPath;
+	}
+	if (sDomain) {
+		sCookie += "; domain=" + sDomain;
+	}
+	if (bSecure) {
+		sCookie += "; secure";
+	}
+	document.cookie = sCookie;
 };
-function getCookie(sName) { 
-	var sRE = "(?:; )?" + sName + "=([^;]*);?"; 
-	var oRE = new RegExp(sRE); 
-	if (oRE.test(document.cookie)) { 
-		return decodeURIComponent(RegExp["$1"]); 
-	} else { 
-		return null; 
-	} 
+function getCookie(sName) {
+	var sRE = "(?:; )?" + sName + "=([^;]*);?";
+	var oRE = new RegExp(sRE);
+	if (oRE.test(document.cookie)) {
+		return decodeURIComponent(RegExp["$1"]);
+	} else {
+		return null;
+	}
 };

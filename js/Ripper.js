@@ -13,7 +13,7 @@ Ripper.prototype.testApplication = function() {
 };
 
 Ripper.prototype.start = function() {
-	
+
 	//checking if one of them is not blank
 	var proceed = false;
 	for (ri=1;ri<=maxRipIndex;ri++) {
@@ -27,7 +27,7 @@ Ripper.prototype.start = function() {
 		for (i=1;i<=maxRipIndex;i++) {
 			if ($('#code'+i).val() != '') $('#img'+i).attr('src', imgLoader.src);
 		}
-		
+
 		//start ripping.
 		ripIndex = 1;
 		tt.module = new Array();
@@ -41,7 +41,7 @@ Ripper.prototype.rip = function() {
 	var code = $('#code'+ripIndex).val().toUpperCase();
 	var ay = $('#ay').val();
 	var semester = $('#semester').val();
-	
+
 	//if (!debug) {
 		var url = 'https://aces01.nus.edu.sg/cors/jsp/report/ModuleDetailedInfo.jsp?acad_y=';
 		url += ay + '&sem_c=' + semester + '&mod_c=' + code;
@@ -49,7 +49,7 @@ Ripper.prototype.rip = function() {
 		var url = 'http://localhost:8888/timetable/m/';
 		url += code + '.htm';
 	}*/
-	
+
 	//give ripper's url to current url
 	this.url = url;
 	if (code != ''){ //if not empty, do ripping
@@ -76,29 +76,29 @@ Ripper.prototype.getModule = function () {
   /** Benchmark speed? **/
   // var $moduleInfoTable = $("table:first>tbody>tr:eq(1)>td>table>tbody>tr:eq(2)>td>table>tbody", this.$page);
 	var $moduleInfoTable = $("table.tableframe:eq(0)", this.$page);
-	
+
 	//ripping module code
 	var moduleCode =
     $("tr:eq(1)>td:eq(1)", $moduleInfoTable).text().trim();
 	var url = this.url;
-	
+
 	//exam day
 	//	var examDate = 'No exam'; // Now it's just "No Exam Date."
 	var examDate =
 		$("tr:eq(5)>td:eq(1)", $moduleInfoTable).text().trim().replace(/\s+(A|P)M$/, "");
-	
+
 	//ripping lecture, tutorial and laboratory.
 	var arrLecture = this.ripLecture();
 	var arrTutorial = new Array();
 	var arrLaboratory = new Array();
 	var arrTutLab = this.ripTutorial();
-	
+
 	iT = 0; iL = 0;
 	for (i=0;i<arrTutLab.length;i++) {
 		if (arrTutLab[i].type == 'lab') arrLaboratory.push(arrTutLab[i]);
 		if (arrTutLab[i].type == 'tut') arrTutorial.push(arrTutLab[i]);
 	}
-	
+
 	//generating new module object
 	oModule = new Module();
 	oModule.code = moduleCode;
@@ -107,16 +107,16 @@ Ripper.prototype.getModule = function () {
 	oModule.lecture = arrLecture;
 	oModule.laboratory = arrLaboratory;
 	oModule.tutorial = arrTutorial;
-	
+
 	tt.module.push(oModule);
 };
 
 Ripper.prototype.ripLecture = function() {
-	
+
 	var $lectureTable = $("table.tableframe:eq(0) ~ table:eq(0)", this.$page);
 
 	arrLecture = new Array();
-	
+
 	// if (! /No Lecture Class/.test(this.sPage)) { //has lecture
 		//ripping all the lectures
 		$("table", $lectureTable).each(function() {
@@ -125,7 +125,7 @@ Ripper.prototype.ripLecture = function() {
 			//splitting the arrblock, to get separated piece of data
 			arrBlock = sBlock.split('<br>');
 			title = arrBlock[0].trim().substring(3);
-			
+
 			//session manipulation
 			nSession = Math.floor(arrBlock.length/2)-1;
 			arrSession = new Array();
@@ -133,13 +133,13 @@ Ripper.prototype.ripLecture = function() {
 				phrase1 = arrBlock[i*2+1];
 				phrase2 = arrBlock[i*2+2];
 				arrCell = new Array();
-				
+
 				var res = /(\w+)\s+From\s+(\d+)\s+hrs\s+to\s+(\d+)\s+hrs\s+in\s+(.+),/.exec(phrase1);
 				day = convertDay(res[1]);
 				start = parseInt(res[2]);
 				end = parseInt(res[3]);
 				place = res[4];
-				
+
 				// test if number is half hour
 				if ((start) % 100 != 0) {
 					start = start - 30;
@@ -147,33 +147,33 @@ Ripper.prototype.ripLecture = function() {
 				if ((end) % 100 != 0) {
 					end = end + 30;
 				}
-				
+
 				type = phrase2.indexOf("EVEN") != -1 ? 2 :
 					phrase2.indexOf("ODD") != -1 ? 1 : 0;
-				
+
 				//pushing cells that this session will occupy
 				for (t=start;t<end;t+=100) { arrCell.push('w'+day+'t'+t); }
-				
+
 				//creating the particular session object, and push into the lecture.
 				oSession = new Session(day,start,end,type,place,arrCell);
-				arrSession.push(oSession);	
+				arrSession.push(oSession);
 			}//end of session manipulation
-			
+
 			//insert new lecture
 			arrLecture.push(new Part(title, 'lec', arrSession));
 		});
 
 	// }//end if
-		
+
 	return arrLecture;
 };
 
 Ripper.prototype.ripTutorial = function() {
 
 	var $tutorialTable = $("table.tableframe:eq(0) ~ table:eq(1)", this.$page);
-	
+
 	arrTutorial = new Array();
-	
+
 	// if (! /No Tutorial Class/.test(this.sPage)) { //has tutorial
 		//ripping all the tutorials
 		$("table", $tutorialTable).each(function() {
@@ -182,10 +182,10 @@ Ripper.prototype.ripTutorial = function() {
 			//splitting the arrblock, to get separated piece of data
 			arrBlock = sBlock.split('<br>');
 			title = arrBlock[0].trim().substring(3);
-			
+
 			//tutorial type
 			tutType = title.indexOf("LABORATORY") != -1 ? 'lab' : 'tut';
-			
+
 			//session manipulation
 			nSession = Math.floor(arrBlock.length/2)-1;
 			arrSession = new Array();
@@ -199,29 +199,29 @@ Ripper.prototype.ripTutorial = function() {
 				start = parseInt(res[2]);
 				end = parseInt(res[3]);
 				place = res[4];
-				
+
 				type = phrase2.indexOf("EVEN") != -1 ? 2 :
 					phrase2.indexOf("ODD") != -1 ? 1 : 0;
 
 				//pushing cells that this session will occupy
 				for (t=start;t<end;t+=100) { arrCell.push('w'+day+'t'+t); }
-				
+
 				//creating the particular session object, and push into the tutorial
 				oSession = new Session(day,start,end,type,place,arrCell);
-				arrSession.push(oSession);	
+				arrSession.push(oSession);
 			}//end of session manipulation
-			
+
 			//insert new tutorial
 			arrTutorial.push(new Part(title, tutType, arrSession));
 		});
 
 	// }//end if
-		
+
 	return arrTutorial;
 };
 
 Ripper.prototype.ripNext = function() {
-       
+
 	if (++ripIndex <= maxRipIndex) {
 		ripper.rip();
 	} else {
@@ -235,7 +235,7 @@ Ripper.prototype.ripNext = function() {
 			setTimeout("alert('Here you are. Happy testing! :)')", 900);
 		}
 	}
-	
+
 };
 
 function convertDay(str) {

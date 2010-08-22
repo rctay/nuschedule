@@ -44,7 +44,7 @@ function status(str){
 	p.setAttribute('title', 'stuck? Click the status until it fixes itself');
 	if (str == standby) p.setAttribute('style', '');
 	else p.setAttribute('style', 'color:#e30');
-	replaceElem(p, oldElem);	
+	replaceElem(p, oldElem);
 	opacity(p.id, 0, 100, 100);
 };
 
@@ -81,14 +81,14 @@ function leaveComment(){
 		opacity(commentLink.id, 0, 100, 100);
 		$('comment_name').focus();
 	}
-	
+
 };
 
 function sendComment(){
 	commentName = $('comment_name');
 	commentEmail = $('comment_email');
 	commentContent = $('comment_content');
-	
+
 	if (commentName.value.trim() == '') {
 		commentName.style.borderColor = '#f33';
 		return;
@@ -101,19 +101,19 @@ function sendComment(){
 		commentContent.style.borderColor = '#f33';
 		return;
 	}
-	
+
 	str = 'name='+commentName.value+'&email='+commentEmail.value+'&content='+commentContent.value;
-	
+
 	xmlhttp = createxmlhttp();
 	xmlhttp.open("POST", 'sendEmail.php', true);
-	xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"); 
-	xmlhttp.onreadystatechange = function() { 
-		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) { 
+	xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 			p = xmlhttp.responseText;
 			commentFeedback = $('comment_feedback');
 			commentBody = $('comment_body');
 			commentLink = $('comment_link');
-			
+
 			commentFeedback.innerHTML = (p == 'success') ? '<p>Comment sent!</p>':'<p style="color:red">Fail to send, please try again</p>';
 			commentBody.style.display = 'none';
 			commentLink.style.display = 'none';
@@ -144,37 +144,37 @@ function showPage3() {
 	opacity('page2',100,0,500);
 	setTimeout("removeElem('page2')", 600);
 	setTimeout("revealElem('page3')", 600);
-	setTimeout("revealElem('master')",600);	
+	setTimeout("revealElem('master')",600);
 };
 
 function page2_addBoxes() {
 	elemBox = document.getElementById('boxes');
-	
+
 	for (i=1;i<=maxRipIndex;i++) {
-		
+
 		div = document.createElement('div');
 		h1 = document.createElement('h1');
 		p = document.createElement('p');
 		input = document.createElement('input');
 		img = document.createElement('img');
-		
+
 		h1.innerHTML = 'Module '+i;
-				
+
 		input.setAttribute('type', 'text');
 		input.setAttribute('maxlength','10');
 		input.id='code'+i;
 		input.className = 'txtbox';
-		
+
 		img.src = imgBlank.src;
 		img.id = 'img'+i;
-		
+
 		p.appendChild(input);
 		div.appendChild(img); //must be first to be appended, coz floating
 		div.appendChild(h1);
 		div.appendChild(p);
 		elemBox.appendChild(div);
 	}
-	
+
 };
 
 function removeElem(elemId, timeout) {
@@ -185,34 +185,34 @@ function revealElem(elemId) {
 	document.getElementById(elemId).style.display = 'block';
 };
 
-function opacity(id, opacStart, opacEnd, millisec) { 
+function opacity(id, opacStart, opacEnd, millisec) {
     //speed for each frame
-    var speed = Math.round(millisec / 100); 
-    var timer = 0; 
+    var speed = Math.round(millisec / 100);
+    var timer = 0;
 
-    //determine the direction for the blending, if start and end are the same nothing happens 
-    if(opacStart > opacEnd) { 
-        for(i = opacStart; i >= opacEnd; i--) { 
-            setTimeout("changeOpac(" + i + ",'" + id + "')",(timer * speed)); 
-            timer++; 
-        } 
-    } else if(opacStart < opacEnd) { 
-        for(i = opacStart; i <= opacEnd; i++) 
-            { 
-            setTimeout("changeOpac(" + i + ",'" + id + "')",(timer * speed)); 
-            timer++; 
-        } 
+    //determine the direction for the blending, if start and end are the same nothing happens
+    if(opacStart > opacEnd) {
+        for(i = opacStart; i >= opacEnd; i--) {
+            setTimeout("changeOpac(" + i + ",'" + id + "')",(timer * speed));
+            timer++;
+        }
+    } else if(opacStart < opacEnd) {
+        for(i = opacStart; i <= opacEnd; i++)
+            {
+            setTimeout("changeOpac(" + i + ",'" + id + "')",(timer * speed));
+            timer++;
+        }
     }
 };
 
-//change the opacity for different browsers 
+//change the opacity for different browsers
 function changeOpac(opacity, id) {
 	object = document.getElementById(id);
 	if (object) {
 		object = object.style;
-	    object.opacity = (opacity / 100); 
-	    object.MozOpacity = (opacity / 100); 
-	    object.KhtmlOpacity = (opacity / 100); 
+	    object.opacity = (opacity / 100);
+	    object.MozOpacity = (opacity / 100);
+	    object.KhtmlOpacity = (opacity / 100);
 	    object.filter = "alpha(opacity=" + opacity + ")";
 	}
 };

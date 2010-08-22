@@ -7,18 +7,18 @@ function TimeTable() {
 	for (var i in this.shortform) {
 		this.longform[this.shortform[i]] = i;
 	}
-	
+
 	this.module = new Array();
 	this.fixedArray = new Array();
 	this.onTableArray = new Array(); //it's nothing much to do with timetable. just for cookie usage.
-	
+
 	//initialize the arrCell, each cell consist of array of nodeid
 	this.cell = new Array();
 	this.resetTable();
-	
+
 	this.tempCell = new Array(); //monday to saturday, hence, 6.
 	this.resetTempCell(); //reset it to 0 first.
-	
+
 };
 
 TimeTable.prototype.resetTable = function() {
@@ -36,7 +36,7 @@ TimeTable.prototype.resetTable = function() {
 TimeTable.prototype.createTable = function() {
 	//cell manipulation
 	var elemTable = $('<div></div>').attr('id', 'tableMaster');
-	
+
 	for (i=0;i<6;i++) {
 		for (j=0;j<14;j++) {
 			$("<div></div>")
@@ -52,28 +52,28 @@ TimeTable.prototype.createTable = function() {
 };
 
 TimeTable.prototype.createAllNode = function(fixedArray, onTableArray) {
-	
+
 	//cell = tabbing info
 	//fixedarray = array of nodes which indicate 'fixed'
 	//onTablearray = array of nodes which indicate 'on table'
-	
+
 	//since this 'createAllNode' is use by both when node has been created and not created
 	//so it's necessary to check the nodeMaster has been set or not
-	
+
 	elemNodeMaster = document.getElementById('nodeMaster');
-	
+
 	if (! elemNodeMaster) { //if not set, create those elements
 		$("#master")
 			.append($("<div></div>").attr('id', 'nodeMaster'))
 			.append($("<div></div>").attr('id', 'tempNodeMaster'))
 			.append($("<div></div>").attr('id', 'moduleViewer'));
 	}
-	
+
 	if (typeof onTableArray == 'object') { //if creating from a existing table
 		document.getElementById('nodeMaster').innerHTML = '';
 		this.createModuleViewer(fixedArray, onTableArray);
 		this.resetTable();
-		
+
 		for (r=0; r<onTableArray.length;r++) {
 			str = onTableArray[r];
 			arr = str.split('_');
@@ -85,9 +85,9 @@ TimeTable.prototype.createAllNode = function(fixedArray, onTableArray) {
 				this.module[modPos][this.longform[type]][objPos], modPos, objPos, fixed);
 		}
 		//after doing the creating of node, then reset cell, to prevent erroneous
-		
+
 		//this.cell = cell;
-		
+
 	} else {
 		//createModuleViewer
 		this.createModuleViewer();
@@ -109,7 +109,7 @@ TimeTable.prototype.createAllNode = function(fixedArray, onTableArray) {
 			}
 		}
 	}
-	
+
 };
 
 //------------------------------------
@@ -141,14 +141,14 @@ TimeTable.prototype.createModuleViewer = function (fixedArray, onTableArray) {
 
 	elemModuleViewer = document.getElementById('moduleViewer');
 	elemModuleViewer.innerHTML = ''; //clear this out
-	
+
 	p = document.createElement('p');
 	p.setAttribute('style','position:absolute;top:390px;left:25px;color:#f30;font-size:12px;');
 	p.innerHTML = 'Take note of the exam date! It may be wrong due to outdated CORS Module Listing. Use this application only after CORS has updated it';
 	elemModuleViewer.appendChild(p);
-	
+
 	hasArray = (typeof onTableArray != 'undefined');
-	
+
 	/** loop through each module **/
 	for (m=0;m<this.module.length;m++) {
 		var top = Math.floor(m/6)*115+420;
@@ -156,10 +156,10 @@ TimeTable.prototype.createModuleViewer = function (fixedArray, onTableArray) {
 		elemModule = document.createElement('div');
 		elemModule.className = 'module';
 		elemModule.setAttribute('style','top:'+top+'px;left:'+left+'px;');
-		
+
 		innerHTML = '<div class="colorChooser" style="background-color:'+backgroundColor[m]+';"></div>';
 		innerHTML += '<h5>'+this.module[m].code+'&nbsp;<small>'+this.module[m].exam+'</small></h5>';
-		
+
 		var t = 0; //use as padding lecture/tutorial/laboratory
 		if (this.module[m].hasLecture()) {
 			goThrough.call(this, "lecture");
@@ -170,66 +170,66 @@ TimeTable.prototype.createModuleViewer = function (fixedArray, onTableArray) {
 		if (this.module[m].hasLaboratory()) {
 			goThrough.call(this, "laboratory");
 		}
-		
+
 		elemModule.innerHTML = innerHTML;
-		
+
 		elemModuleViewer.appendChild(elemModule);
 	}
-	
-	
+
+
 };
 
 TimeTable.prototype.createNode = function(moduleCode, obj, modulePos, objPos, fixed) {
-	
+
 	//fixed is an optional parameter.
 	//indicate whether the node is a fixed node. Prefix with f_
 	//its tab will be prefixed with e_
 	fixed = fixed || false;
 	if (fixed) this.fixedArray.push(modulePos+'_'+obj.type+'_'+objPos);
-	
+
 	//add in onTableArray
 	this.onTableArray.push(modulePos+'_'+obj.type+'_'+objPos);
-	
+
 	//obj should be the lecture/tutorial/laboratory
 	//to know their id, simply, obj.session[i].cell[i].
-	
+
 	elemNodeMaster = document.getElementById('nodeMaster');
 	elemSubNode = document.createElement('div');
-	
+
 	for (i=0;i<obj.session.length;i++) {
-		
+
 		sessionLength = obj.session[i].cell.length;
 		startingCell = obj.session[i].cell[0];
-		
+
 		title = this.shortenTitle(obj.title);
 		innerHTML = '<b>'+moduleCode + '</b><br/>' + title+'<br/>'+obj.session[i].place;
-			
+
 		//getting left and top of the node, by refering to the starting cell id
 		elem = document.getElementById(startingCell);
 		t = parseInt(elem.style.top)+1;
 		l = parseInt(elem.style.left)+1;
 		w = cellWidth*sessionLength - (10-sessionLength);
 		h = cellHeight-6;
-		
+
 		//node id, is the id of all occupied id, and the some other info.
 		//example: n_0_lab_2_w1t800 (starting cell only, to differentiate with another session)
-		
+
 		nodeId = (fixed) ? 'f_' : 'n_';
 		nodeId += modulePos+'_'+obj.type+'_'+objPos+'_'+obj.session[i].cell[0];
 		//for (s=0;s<sessionLength;s++) {
 		//	nodeId += '_' + obj.session[i].cell[s];
 		//}
-		
+
 		elemNode = document.createElement('div');
 		elemNode.className = (fixed) ? 'fixedNode' : 'node';
 		elemNode.setAttribute('id',nodeId);
 		elemNode.setAttribute('style', 'left:'+l+'px;top:'+t+'px;width:'+w+'px;height:'+h+'px;background-color:'+backgroundColor[modulePos]+';color:'+fontColor[modulePos]);
 		elemNode.innerHTML = innerHTML;
-		
+
 		//SKIP TABBING IF FIXED!! :)
 		if (! fixed) {
 			this.signupTab(startingCell, 'n_'+modulePos+'_'+obj.type+'_'+objPos);
-			tabNumber = this.getTab(startingCell, 'n_'+modulePos+'_'+obj.type+'_'+objPos) + 1;		
+			tabNumber = this.getTab(startingCell, 'n_'+modulePos+'_'+obj.type+'_'+objPos) + 1;
 			tabTop = (tabNumber > 3) ? parseInt(t)+cellHeight : t-10;
 			tabLeft = (tabNumber > 3) ? parseInt(l)+19*(tabNumber-4) : parseInt(l)+19*(tabNumber-1);
 
@@ -242,7 +242,7 @@ TimeTable.prototype.createNode = function(moduleCode, obj, modulePos, objPos, fi
 			elemTab.setAttribute('style', 'left:'+tabLeft+'px;top:'+tabTop+'px;width:17px;height:10px;background-color:'+backgroundColor[modulePos]);
 			elemSubNode.appendChild(elemTab);
 		}
-		
+
 		subNodeId = 's_'+modulePos+'_'+obj.type+'_'+objPos;
 		elemSubNode.className = 'subNode';
 		elemSubNode.setAttribute('id', subNodeId);
@@ -252,37 +252,37 @@ TimeTable.prototype.createNode = function(moduleCode, obj, modulePos, objPos, fi
 };
 
 TimeTable.prototype.showNode = function(moduleCode, obj, modulePos, objPos) { //modulePos and objPos? for tabbing purpose (tabid)
-	
+
 	//arr should be the lecture/tutorial/laboratory
 	//to know their id, simply, arr.session[i].cell[i].
 	elemTempNodeMaster = document.getElementById('tempNodeMaster');
 	elemSubNode = document.createElement('div');
-	
+
 	//if the obj is fixed, why show? just skip all.
 	if (this.fixedArray.indexOf(modulePos+'_'+obj.type+'_'+objPos) >= 0) return;
-	
+
 	for (i=0;i<obj.session.length;i++) {
-				
+
 		sessionLength = obj.session[i].cell.length;
 		startingCell = obj.session[i].cell[0];
-		
+
 		//since the nodes are created randomly, so some of the cells might be overlapped by previous time
 		//like, 800-1000 class might overlap a class from 900-1000.
 		//so, rip out the cell position, and give them zIndex.
 		startingTime = parseInt(startingCell.substring(3,startingCell.length));
 		zIndex = Math.floor(startingTime/100); //floor it, to prevent some malfunction startingtime occur.
-		
+
 		/\[(.+)\]/.test(obj.title);
 		classNumber = RegExp.$1;
 		innerHTML = '<b>'+moduleCode + '</b><br/>'+this.shortenTitle(obj.title)+'<br/>'+obj.session[i].place;
-			
+
 		//getting left and top of the node, by refering to the starting cell id
 		elem = document.getElementById(startingCell);
 		t = parseInt(elem.style.top)+1;
 		l = parseInt(elem.style.left)+1;
 		w = cellWidth*sessionLength - (7-sessionLength);
 		h = cellHeight-6;
-		
+
 		//tabid: b_moduleid_type_objid_cellid
 		//tabid: b_0_lab_1_1
 		nodeId = 'b_'+modulePos+'_'+obj.type+'_'+objPos+'_'+i;
@@ -291,7 +291,7 @@ TimeTable.prototype.showNode = function(moduleCode, obj, modulePos, objPos) { //
 		elemNode.setAttribute('id',nodeId);
 		elemNode.setAttribute('style', 'left:'+l+'px;top:'+t+'px;width:'+w+'px;height:'+h+'px;z-index:'+zIndex);
 		elemNode.innerHTML = innerHTML;
-		
+
 		//for tabbing purpose, a cell should be marked into signuptempcell
 		//as it will help adjusting the tab left position. tempCell is resetted everytime
 		//the user release the mouse.
@@ -300,7 +300,7 @@ TimeTable.prototype.showNode = function(moduleCode, obj, modulePos, objPos) { //
 
 		tabTop = (tabNumber > 3) ? parseInt(t)+cellHeight : t-10;
 		tabLeft = (tabNumber > 3) ? parseInt(l)+19*(tabNumber-4) : parseInt(l)+19*(tabNumber-1);
-		
+
 		//tabid: t_moduleid_type_objid_sessionid
 		//tabid: t_0_lab_1_1
 		tabId = 't_'+modulePos+'_'+obj.type+'_'+objPos+'_'+i;
@@ -309,7 +309,7 @@ TimeTable.prototype.showNode = function(moduleCode, obj, modulePos, objPos) { //
 		elemTab.innerHTML = classNumber;
 		elemTab.setAttribute('id',tabId);
 		elemTab.setAttribute('style', 'left:'+tabLeft+'px;top:'+tabTop+'px;width:17px;height:10px;');
-		
+
 		elemSubNode.appendChild(elemNode);
 		elemSubNode.appendChild(elemTab);
 		elemTempNodeMaster.appendChild(elemSubNode);
@@ -317,17 +317,17 @@ TimeTable.prototype.showNode = function(moduleCode, obj, modulePos, objPos) { //
 };
 
 TimeTable.prototype.swapNode = function(targetNode, oldNode, fixed) {
-	
+
 	/** TODO Bug here **/
 	//removing old node first
 	arrElemId = oldNode.attr('id').split('_');
 	elemId = 's_'+arrElemId[1]+'_'+arrElemId[2]+'_'+arrElemId[3];
 	$('#'+elemId).remove();
-		
+
 	//fixed is an optional parameter.
 	//indicate whether the node is a fixed node.
 	fixed = fixed || false;
-	
+
 	//insert a new node
 	arrT = targetNode.attr('id').split('_');
 	mid = parseInt(arrT[1]);
@@ -353,19 +353,19 @@ TimeTable.prototype.shortenTitle = function(title) {
 };
 
 TimeTable.prototype.unmark = function (obj, nodeId) { //take in a Part object
-	
+
 	//convert nodeId (s_0_lec_0) to n_0_lec_0
 	nodeId = 'n'+nodeId.substring(1,nodeId.length);
-	
+
 	for (u=0;u<obj.session.length;u++) { //loop through
 		firstCell = obj.session[u].cell[0]; //Like: w1t800
-		
+
 		//rip out the col and row
 		theWeek = parseInt(firstCell.substring(1,2));
 		theTime = parseInt(firstCell.substring(3,firstCell.length));
 		col = Math.floor(theTime/100)-8;
 		row = theWeek-1;
-		
+
 		//removing the nodeId (n_0_lec_0) from the array cell by marking 0 on it.
 		indexOfId = this.cell[row][col].indexOf(nodeId);
 		this.cell[row][col][indexOfId] = 0;
@@ -373,22 +373,22 @@ TimeTable.prototype.unmark = function (obj, nodeId) { //take in a Part object
 };
 
 TimeTable.prototype.removeNode = function(node) {
-	
+
 	//coz swapNode is used by both k_ and s_
 	//so it is better to convert node.id to s_ before remove
 	if (typeof node == 'undefined') return '';
 	nodeId = 's'+node.attr('id').substring(1);
 	node = document.getElementById(nodeId);
 	if (node) {
-		
+
 		//check whether it is a fixed node. If yes, remove from the fixedArray
 		pos = this.fixedArray.indexOf(node.id.substring(2,node.id.length));
 		if (pos >= 0) this.fixedArray.splice(pos,1);
-		
+
 		//remove from onTableArray
 		pos = this.onTableArray.indexOf(node.id.substring(2,node.id.length));
 		if (pos >= 0) this.onTableArray.splice(pos,1);
-		
+
 		document.getElementById('nodeMaster').removeChild(node);
 
 		//remove from this.cell
@@ -398,7 +398,7 @@ TimeTable.prototype.removeNode = function(node) {
 		ooid = parseInt(arrOld[3]);
 		this.unmark(this.module[omid][this.longform[otype]][ooid], node.id);
 	}
-	
+
 };
 
 TimeTable.prototype.signupTempCell = function(id) {

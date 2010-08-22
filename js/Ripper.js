@@ -1,5 +1,4 @@
 //http://localhost:8888/timetable/readModule.php?url=http://localhost:8888/timetable/m/cs2100.htm
-var ripIndex;
 function Ripper() {
 	this.MAX_RIP_INDEX = 12;
 
@@ -30,7 +29,7 @@ Ripper.prototype.start = function() {
 		}
 
 		//start ripping.
-		ripIndex = 1;
+		this.rip_index = 1;
 		tt.module = new Array();
 		ripper.rip();
 	}
@@ -39,7 +38,7 @@ Ripper.prototype.start = function() {
 Ripper.prototype.rip = function() {
 	//url pattern:
 	//https://sit.aces01.nus.edu.sg/cors/jsp/report/ModuleDetailedInfo.jsp?acad_y=2007/2008&sem_c=2&mod_c=AR9999
-	var code = $('#code'+ripIndex).val().toUpperCase();
+	var code = $('#code'+this.rip_index).val().toUpperCase();
 	var ay = $('#ay').val();
 	var semester = $('#semester').val();
 
@@ -60,14 +59,14 @@ Ripper.prototype.rip = function() {
 				_ripper.sPage = data;
 				_ripper.$page = $(data);
 				_ripper.getModule();
-				$('#img'+ripIndex).attr('src',imgOK.src);
+				$('#img'+this.rip_index).attr('src',imgOK.src);
 			}else{
-				$('#img'+ripIndex).attr('src',imgError.src);
+				$('#img'+this.rip_index).attr('src',imgError.src);
 			}
 			_ripper.ripNext();
 		}})(this));
 	} else {
-		$('#img'+ripIndex).attr('src', imgBlank.src);
+		$('#img'+this.rip_index).attr('src', imgBlank.src);
 		this.ripNext();
 	}
 };
@@ -223,7 +222,7 @@ Ripper.prototype.ripTutorial = function() {
 
 Ripper.prototype.ripNext = function() {
 
-	if (++ripIndex <= this.MAX_RIP_INDEX) {
+	if (++this.rip_index <= this.MAX_RIP_INDEX) {
 		ripper.rip();
 	} else {
 		$('#ripButton').val('Re-Scan All').mouseup(ripper.start);

@@ -332,7 +332,7 @@ TimeTable.prototype.swapNode = function(targetNode, oldNode, fixed) {
 	arrT = targetNode.attr('id').split('_');
 	mid = parseInt(arrT[1]);
 	type = arrT[2];
- 	oid= parseInt(arrT[3]);
+	oid= parseInt(arrT[3]);
 	this.createNode(this.module[mid].code,
 		this.module[mid][this.longform[type]][oid], mid, oid, fixed);
 };

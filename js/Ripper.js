@@ -72,14 +72,14 @@ Ripper.prototype.rip = function() {
 };
 
 Ripper.prototype.getModule = function () {
-  /** All regex into XPath / jQuery selectors **/
-  /** Benchmark speed? **/
-  // var $moduleInfoTable = $("table:first>tbody>tr:eq(1)>td>table>tbody>tr:eq(2)>td>table>tbody", this.$page);
+	/** All regex into XPath / jQuery selectors **/
+	/** Benchmark speed? **/
+	// var $moduleInfoTable = $("table:first>tbody>tr:eq(1)>td>table>tbody>tr:eq(2)>td>table>tbody", this.$page);
 	var $moduleInfoTable = $("table.tableframe:eq(0)", this.$page);
 
 	//ripping module code
 	var moduleCode =
-    $("tr:eq(1)>td:eq(1)", $moduleInfoTable).text().trim();
+	$("tr:eq(1)>td:eq(1)", $moduleInfoTable).text().trim();
 	var url = this.url;
 
 	//exam day

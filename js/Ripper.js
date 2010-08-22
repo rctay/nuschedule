@@ -63,7 +63,7 @@ Ripper.prototype._send_request = function(url) {
 
 	var _ripper = this;
 	$.get(this.url, function(data) {
-		if (data.indexOf("Module Detailed Information for") != -1) {
+		if (data.indexOf("<strong>Module Information</strong>") != -1) {
 			// set the sPage
 			_ripper.sPage = data;
 			_ripper.$page = $(data);

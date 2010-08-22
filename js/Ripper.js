@@ -25,7 +25,9 @@ Ripper.prototype.start = function() {
 		$('#ripButton').val('Waiting...').mouseup(function() { return false; });
 		$('#nextButton').hide();
 		for (i=1;i<=maxRipIndex;i++) {
-			if ($('#code'+i).val() != '') $('#img'+i).attr('src', imgLoader.src);
+			if ($('#code'+i).val() != '') {
+				NUSchedule.signals.send("on_module_rip_start", i);
+			}
 		}
 
 		//start ripping.
@@ -59,14 +61,14 @@ Ripper.prototype.rip = function() {
 				_ripper.sPage = data;
 				_ripper.$page = $(data);
 				_ripper.getModule();
-				$('#img'+ripIndex).attr('src',imgOK.src);
+				NUSchedule.signals.send("on_module_rip_success", ripIndex);
 			}else{
-				$('#img'+ripIndex).attr('src',imgError.src);
+				NUSchedule.signals.send("on_module_rip_error", ripIndex);
 			}
 			_ripper.ripNext();
 		}})(this));
 	} else {
-		$('#img'+ripIndex).attr('src', imgBlank.src);
+		NUSchedule.signals.send("on_module_rip_blank", ripIndex);
 		this.ripNext();
 	}
 };

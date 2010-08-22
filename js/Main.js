@@ -12,10 +12,19 @@ var fontColor = ['#000','#000','#000','#000','#000','#000','#000','#000','#000',
 
 if (document.images) {
 	//status image, the ripper textboxes
-	var imgError = new Image(); imgError.src = 'images/exclamation.png';
-	var imgOK = new Image(); imgOK.src='images/accept.png';
-	var imgLoader = new Image(); imgLoader.src = 'images/loader.gif';
-	var imgBlank = new Image(); imgBlank.src = 'images/blank.gif';
+	NUSchedule.signals.register("on_module_rip_start", function(i) {
+		$('#img'+i).attr('src', 'images/loader.gif');
+	});
+	NUSchedule.signals.register("on_module_rip_success", function(i) {
+		$('#img'+i).attr('src', 'images/accept.png');
+	});
+	NUSchedule.signals.register("on_module_rip_error", function(i) {
+		$('#img'+i).attr('src', 'images/exclamation.png');
+	});
+	NUSchedule.signals.register("on_module_rip_blank", function(i) {
+		$('#img'+i).attr('src', 'images/blank.gif');
+	});
+
 	//setRow
 	var imgSave = new Image(); imgSave.src = 'images/database_save.png';
 	var imgLoad = new Image(); imgLoad.src = 'images/database_go.png';
@@ -165,7 +174,6 @@ function page2_addBoxes() {
 		input.id='code'+i;
 		input.className = 'txtbox';
 
-		img.src = imgBlank.src;
 		img.id = 'img'+i;
 
 		p.appendChild(input);
@@ -173,6 +181,8 @@ function page2_addBoxes() {
 		div.appendChild(h1);
 		div.appendChild(p);
 		elemBox.appendChild(div);
+
+		NUSchedule.signals.send("on_module_rip_blank", i);
 	}
 
 };

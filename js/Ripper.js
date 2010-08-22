@@ -53,6 +53,29 @@ Ripper.prototype.start = function() {
 	}
 };
 
+/*
+ * Sends a GET request to a module info url.
+ *
+ * Available externally for testing purposes.
+ */
+Ripper.prototype._send_request = function(url) {
+	this.url = url;
+
+	var _ripper = this;
+	$.get(this.url, function(data) {
+		if (data.indexOf("Module Detailed Information for") != -1) {
+			// set the sPage
+			_ripper.sPage = data;
+			_ripper.$page = $(data);
+			_ripper.getModule();
+			$('#img'+_ripper.rip_index).attr('src',imgOK.src);
+		}else{
+			$('#img'+_ripper.rip_index).attr('src',imgError.src);
+		}
+		_ripper.ripNext();
+	});
+};
+
 Ripper.prototype.rip = function() {
 	//url pattern:
 	//https://sit.aces01.nus.edu.sg/cors/jsp/report/ModuleDetailedInfo.jsp?acad_y=2007/2008&sem_c=2&mod_c=AR9999
@@ -69,21 +92,8 @@ Ripper.prototype.rip = function() {
 	}*/
 
 	//give ripper's url to current url
-	this.url = url;
 	if (code != ''){ //if not empty, do ripping
-		var _ripper = this;
-		$.get(this.url, function(data) {
-			if (data.indexOf("Module Detailed Information for") != -1) {
-				// set the sPage
-				_ripper.sPage = data;
-				_ripper.$page = $(data);
-				_ripper.getModule();
-				$('#img'+_ripper.rip_index).attr('src',imgOK.src);
-			}else{
-				$('#img'+_ripper.rip_index).attr('src',imgError.src);
-			}
-			_ripper.ripNext();
-		});
+		this._send_request(url);
 	} else {
 		$('#img'+this.rip_index).attr('src', imgBlank.src);
 		this.ripNext();

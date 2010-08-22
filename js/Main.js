@@ -150,7 +150,7 @@ function showPage3() {
 function page2_addBoxes() {
 	elemBox = document.getElementById('boxes');
 
-	for (i=1;i<=maxRipIndex;i++) {
+	for (i=1;i<=ripper.MAX_RIP_INDEX;i++) {
 
 		div = document.createElement('div');
 		h1 = document.createElement('h1');

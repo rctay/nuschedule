@@ -1,8 +1,9 @@
 //http://localhost:8888/timetable/readModule.php?url=http://localhost:8888/timetable/m/cs2100.htm
-var maxRipIndex = 12;
 var ripIndex;
 var autoStart = false;
 function Ripper() {
+	this.MAX_RIP_INDEX = 12;
+
 	this.url = '';
 	this.sPage = '';
 };
@@ -16,7 +17,7 @@ Ripper.prototype.start = function() {
 
 	//checking if one of them is not blank
 	var proceed = false;
-	for (ri=1;ri<=maxRipIndex;ri++) {
+	for (ri=1;ri<=this.MAX_RIP_INDEX;ri++) {
 		if ($('#code'+ri).val() != ''){ //not empty
 			proceed = true; break;
 		}
@@ -24,7 +25,7 @@ Ripper.prototype.start = function() {
 	if (proceed) {
 		$('#ripButton').val('Waiting...').mouseup(function() { return false; });
 		$('#nextButton').hide();
-		for (i=1;i<=maxRipIndex;i++) {
+		for (i=1;i<=this.MAX_RIP_INDEX;i++) {
 			if ($('#code'+i).val() != '') $('#img'+i).attr('src', imgLoader.src);
 		}
 
@@ -222,7 +223,7 @@ Ripper.prototype.ripTutorial = function() {
 
 Ripper.prototype.ripNext = function() {
 
-	if (++ripIndex <= maxRipIndex) {
+	if (++ripIndex <= this.MAX_RIP_INDEX) {
 		ripper.rip();
 	} else {
 		$('#ripButton').val('Re-Scan All').mouseup(ripper.start);

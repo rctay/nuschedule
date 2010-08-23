@@ -1,7 +1,6 @@
-QUnit.test("test ripping with CS1101S (Sem 1, 2010/2011) (cached)", function() {
+var prepare_test_cs1101s = function() {
 	// if the module was ripped correctly, then it will be appended and thus available at pos
 	var pos = tt.module.length;
-	ripper._send_request("data/2010-11-01-cs1101s.html");
 	QUnit.stop(1000);
 	NUSchedule.signals.register("on_module_rip_success", function() {
 		QUnit.start();
@@ -23,4 +22,9 @@ QUnit.test("test ripping with CS1101S (Sem 1, 2010/2011) (cached)", function() {
 			[3, 1000, 1200, 0, "LT15"],
 			"check lecture session 1");
 	});
+};
+
+QUnit.test("test ripping with CS1101S (Sem 1, 2010/2011) (cached)", function() {
+	prepare_test_cs1101s();
+	ripper._send_request("data/2010-11-01-cs1101s.html");
 });

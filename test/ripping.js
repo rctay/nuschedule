@@ -3,6 +3,7 @@ var prepare_test_cs1101s = function() {
 	var pos = tt.module.length;
 	QUnit.stop(1000);
 	NUSchedule.signals.register("on_module_rip_success", function() {
+		NUSchedule.signals.remove("on_module_rip_success", this);
 		QUnit.start();
 		QUnit.ok(true, "fetched module info (cached)");
 

@@ -283,8 +283,9 @@ Ripper.prototype.ripNext = function() {
 
 };
 
-function convertDay(str) {
-	return {
+var convertDay = (function() {
+	// the day->number mapping - "cached"
+	var MAPPING = {
 		'MONDAY':	1,
 		'TUESDAY':	2,
 		'WEDNESDAY':	3,
@@ -292,5 +293,9 @@ function convertDay(str) {
 		'FRIDAY':	5,
 		'SATURDAY':	6,
 		'SUNDAY':	7
-	}[str];
-};
+	};
+	// return a closure - this is the actual function that will be exposed.
+	return function(str) {
+		return MAPPING[str];
+	};
+})();

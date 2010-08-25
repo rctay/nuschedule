@@ -5,7 +5,7 @@ var prepare_test_cs1101s = function() {
 	NUSchedule.signals.register("on_module_rip_success", function() {
 		NUSchedule.signals.remove("on_module_rip_success", this);
 		QUnit.start();
-		QUnit.ok(true, "fetched module info (cached)");
+		QUnit.ok(true, "fetched module info");
 
 		var module = tt.module[pos];
 		QUnit.equals(module.code, "CS1101S", "check module code");

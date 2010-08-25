@@ -122,7 +122,6 @@ Ripper.prototype.getModule = function () {
 	var arrLaboratory = new Array();
 	var arrTutLab = this.ripTutorial();
 
-	iT = 0; iL = 0;
 	for (i=0;i<arrTutLab.length;i++) {
 		if (arrTutLab[i].type == 'lab') arrLaboratory.push(arrTutLab[i]);
 		if (arrTutLab[i].type == 'tut') arrTutorial.push(arrTutLab[i]);

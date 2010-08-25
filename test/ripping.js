@@ -26,6 +26,7 @@ var prepare_test_cs1101s = function() {
 		}
 
 		_check_session(0, [3, 1000, 1200, 0, "LT15"]);
+		_check_session(1, [5, 1100, 1200, 0, "LT15"]);
 	});
 };
 

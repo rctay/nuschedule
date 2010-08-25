@@ -160,7 +160,7 @@ Ripper.prototype.ripLecture = function() {
 
 			var phrase1, phrase2, arrCell;
 			var res, day, start, end, place;
-			var type, oSession;
+			var type;
 
 			for (var i=0;i<nSession;i++) {
 				phrase1 = arrBlock[i*2+1];
@@ -188,8 +188,8 @@ Ripper.prototype.ripLecture = function() {
 				for (var t=start;t<end;t+=100) { arrCell.push('w'+day+'t'+t); }
 
 				//creating the particular session object, and push into the lecture.
-				oSession = new Session(day,start,end,type,place,arrCell);
-				arrSession.push(oSession);
+				arrSession.push(
+					new Session(day,start,end,type,place,arrCell));
 			}//end of session manipulation
 
 			//insert new lecture
@@ -225,7 +225,7 @@ Ripper.prototype.ripTutorial = function() {
 
 			var phrase1, phrase2, arrCell;
 			var res, day, start, end, place;
-			var type, oSession;
+			var type;
 
 			for (var i=0;i<nSession;i++) {
 				phrase1 = arrBlock[i*2+1];
@@ -245,8 +245,8 @@ Ripper.prototype.ripTutorial = function() {
 				for (var t=start;t<end;t+=100) { arrCell.push('w'+day+'t'+t); }
 
 				//creating the particular session object, and push into the tutorial
-				oSession = new Session(day,start,end,type,place,arrCell);
-				arrSession.push(oSession);
+				arrSession.push(
+					new Session(day,start,end,type,place,arrCell));
 			}//end of session manipulation
 
 			//insert new tutorial

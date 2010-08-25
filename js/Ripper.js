@@ -21,8 +21,8 @@ Ripper.prototype.testApplication = function() {
  * Iteration is stopped when 'func' returns true.
  */
 Ripper.prototype._foreach_module_field = function(func) {
-	for (var i=1; i<=this.MAX_RIP_INDEX; i++) {
-		if (func(i, $('#code'+i))) {
+	for (var i = 1; i <= this.MAX_RIP_INDEX; i++) {
+		if (func(i, $('#code' + i))) {
 			break;
 		}
 	}
@@ -49,7 +49,7 @@ Ripper.prototype.start = function() {
 		//start ripping.
 		this.rip_index = 1;
 		tt.module = new Array();
-		ripper.rip();
+		this.rip();
 	}
 };
 
@@ -69,7 +69,7 @@ Ripper.prototype._send_request = function(url) {
 			_ripper.$page = $(data);
 			_ripper.getModule();
 			NUSchedule.signals.send("on_module_rip_success", _ripper.rip_index);
-		}else{
+		} else {
 			NUSchedule.signals.send("on_module_rip_error", _ripper.rip_index);
 		}
 		_ripper.ripNext();
@@ -79,20 +79,20 @@ Ripper.prototype._send_request = function(url) {
 Ripper.prototype.rip = function() {
 	//url pattern:
 	//https://sit.aces01.nus.edu.sg/cors/jsp/report/ModuleDetailedInfo.jsp?acad_y=2007/2008&sem_c=2&mod_c=AR9999
-	var code = $('#code'+this.rip_index).val().toUpperCase();
+	var code = $('#code' + this.rip_index).val().toUpperCase();
 	var ay = $('#ay').val();
 	var semester = $('#semester').val();
 
 	//if (!debug) {
 		var url = 'https://aces01.nus.edu.sg/cors/jsp/report/ModuleDetailedInfo.jsp?acad_y=';
 		url += ay + '&sem_c=' + semester + '&mod_c=' + code;
-	/*}else{
+	/*} else {
 		var url = 'http://localhost:8888/timetable/m/';
 		url += code + '.htm';
 	}*/
 
 	//give ripper's url to current url
-	if (code != ''){ //if not empty, do ripping
+	if (code != '') { //if not empty, do ripping
 		this._send_request(url);
 	} else {
 		NUSchedule.signals.send("on_module_rip_blank", this.rip_index);
@@ -122,14 +122,13 @@ Ripper.prototype.getModule = function () {
 	var arrLaboratory = new Array();
 	var arrTutLab = this.ripTutorial();
 
-	iT = 0; iL = 0;
-	for (i=0;i<arrTutLab.length;i++) {
+	for (var i = 0; i < arrTutLab.length; i++) {
 		if (arrTutLab[i].type == 'lab') arrLaboratory.push(arrTutLab[i]);
 		if (arrTutLab[i].type == 'tut') arrTutorial.push(arrTutLab[i]);
 	}
 
 	//generating new module object
-	oModule = new Module();
+	var oModule = new Module();
 	oModule.code = moduleCode;
 	oModule.link = url;
 	oModule.exam = examDate;
@@ -144,26 +143,31 @@ Ripper.prototype.ripLecture = function() {
 
 	var $lectureTable = $("table.tableframe:eq(0) ~ table:eq(0)", this.$page);
 
-	arrLecture = new Array();
+	var arrLecture = new Array();
 
 	// if (! /No Lecture Class/.test(this.sPage)) { //has lecture
 		//ripping all the lectures
 		$("table", $lectureTable).each(function() {
-			sBlock = $("td", this).html();
+			var sBlock = $("td", this).html();
 
 			//splitting the arrblock, to get separated piece of data
-			arrBlock = sBlock.split('<br>');
-			title = arrBlock[0].trim().substring(3);
+			var arrBlock = sBlock.split('<br>');
+			var title = arrBlock[0].trim().substring(3);
 
 			//session manipulation
-			nSession = Math.floor(arrBlock.length/2)-1;
-			arrSession = new Array();
-			for (i=0;i<nSession;i++) {
-				phrase1 = arrBlock[i*2+1];
-				phrase2 = arrBlock[i*2+2];
+			var nSession = Math.floor(arrBlock.length/2)-1;
+			var arrSession = new Array();
+
+			var phrase1, phrase2, arrCell;
+			var res, day, start, end, place;
+			var type;
+
+			for (var i = 0; i < nSession; i++) {
+				phrase1 = arrBlock[i * 2 + 1];
+				phrase2 = arrBlock[i * 2 + 2];
 				arrCell = new Array();
 
-				var res = /(\w+)\s+From\s+(\d+)\s+hrs\s+to\s+(\d+)\s+hrs\s+in\s+(.+),/.exec(phrase1);
+				res = /(\w+)\s+From\s+(\d+)\s+hrs\s+to\s+(\d+)\s+hrs\s+in\s+(.+),/.exec(phrase1);
 				day = convertDay(res[1]);
 				start = parseInt(res[2]);
 				end = parseInt(res[3]);
@@ -181,11 +185,13 @@ Ripper.prototype.ripLecture = function() {
 					phrase2.indexOf("ODD") != -1 ? 1 : 0;
 
 				//pushing cells that this session will occupy
-				for (t=start;t<end;t+=100) { arrCell.push('w'+day+'t'+t); }
+				for (var t = start; t < end; t += 100) {
+					arrCell.push('w' + day + 't' + t);
+				}
 
 				//creating the particular session object, and push into the lecture.
-				oSession = new Session(day,start,end,type,place,arrCell);
-				arrSession.push(oSession);
+				arrSession.push(
+					new Session(day,start,end,type,place,arrCell));
 			}//end of session manipulation
 
 			//insert new lecture
@@ -201,29 +207,34 @@ Ripper.prototype.ripTutorial = function() {
 
 	var $tutorialTable = $("table.tableframe:eq(0) ~ table:eq(1)", this.$page);
 
-	arrTutorial = new Array();
+	var arrTutorial = new Array();
 
 	// if (! /No Tutorial Class/.test(this.sPage)) { //has tutorial
 		//ripping all the tutorials
 		$("table", $tutorialTable).each(function() {
-			sBlock = $("td", this).html();
+			var sBlock = $("td", this).html();
 
 			//splitting the arrblock, to get separated piece of data
-			arrBlock = sBlock.split('<br>');
-			title = arrBlock[0].trim().substring(3);
+			var arrBlock = sBlock.split('<br>');
+			var title = arrBlock[0].trim().substring(3);
 
 			//tutorial type
-			tutType = title.indexOf("LABORATORY") != -1 ? 'lab' : 'tut';
+			var tutType = title.indexOf("LABORATORY") != -1 ? 'lab' : 'tut';
 
 			//session manipulation
-			nSession = Math.floor(arrBlock.length/2)-1;
-			arrSession = new Array();
-			for (i=0;i<nSession;i++) {
-				phrase1 = arrBlock[i*2+1];
-				phrase2 = arrBlock[i*2+2];
+			var nSession = Math.floor(arrBlock.length/2)-1;
+			var arrSession = new Array();
+
+			var phrase1, phrase2, arrCell;
+			var res, day, start, end, place;
+			var type;
+
+			for (var i = 0; i < nSession; i++) {
+				phrase1 = arrBlock[i * 2 + 1];
+				phrase2 = arrBlock[i * 2 + 2];
 				arrCell = new Array();
 
-				var res = /(\w+)\s+From\s+(\d+)\s+hrs\s+to\s+(\d+)\s+hrs\s+in\s+(.+),/.exec(phrase1);
+				res = /(\w+)\s+From\s+(\d+)\s+hrs\s+to\s+(\d+)\s+hrs\s+in\s+(.+),/.exec(phrase1);
 				day = convertDay(res[1]);
 				start = parseInt(res[2]);
 				end = parseInt(res[3]);
@@ -233,11 +244,13 @@ Ripper.prototype.ripTutorial = function() {
 					phrase2.indexOf("ODD") != -1 ? 1 : 0;
 
 				//pushing cells that this session will occupy
-				for (t=start;t<end;t+=100) { arrCell.push('w'+day+'t'+t); }
+				for (var t = start; t < end; t += 100) {
+					arrCell.push('w' + day + 't' + t);
+				}
 
 				//creating the particular session object, and push into the tutorial
-				oSession = new Session(day,start,end,type,place,arrCell);
-				arrSession.push(oSession);
+				arrSession.push(
+					new Session(day,start,end,type,place,arrCell));
 			}//end of session manipulation
 
 			//insert new tutorial
@@ -252,22 +265,37 @@ Ripper.prototype.ripTutorial = function() {
 Ripper.prototype.ripNext = function() {
 
 	if (++this.rip_index <= this.MAX_RIP_INDEX) {
-		ripper.rip();
+		this.rip();
 	} else {
-		$('#ripButton').val('Re-Scan All').mouseup(ripper.start);
-		if (tt.module.length > 0){
+		$('#ripButton').val('Re-Scan All').mouseup(this.start);
+		if (tt.module.length > 0) {
 			//show NEXT button if module>0
 			$("#nextButton").show();
 		}
 		if (this.auto_start) {
-			tt.createTable();tt.createAllNode();st.showSetFunctions();showPage3();
+			tt.createTable();
+			tt.createAllNode();
+			st.showSetFunctions();
+			showPage3();
 			setTimeout("alert('Here you are. Happy testing! :)')", 900);
 		}
 	}
 
 };
 
-function convertDay(str) {
-	return {'MONDAY': 1, 'TUESDAY': 2, 'WEDNESDAY': 3,
-	'THURSDAY': 4, 'FRIDAY': 5, 'SATURDAY': 6, 'SUNDAY': 7}[str];
-};
+var convertDay = (function() {
+	// the day->number mapping - "cached"
+	var MAPPING = {
+		'MONDAY':	1,
+		'TUESDAY':	2,
+		'WEDNESDAY':	3,
+		'THURSDAY':	4,
+		'FRIDAY':	5,
+		'SATURDAY':	6,
+		'SUNDAY':	7
+	};
+	// return a closure - this is the actual function that will be exposed.
+	return function(str) {
+		return MAPPING[str];
+	};
+})();

@@ -21,8 +21,8 @@ Ripper.prototype.testApplication = function() {
  * Iteration is stopped when 'func' returns true.
  */
 Ripper.prototype._foreach_module_field = function(func) {
-	for (var i=1; i<=this.MAX_RIP_INDEX; i++) {
-		if (func(i, $('#code'+i))) {
+	for (var i = 1; i <= this.MAX_RIP_INDEX; i++) {
+		if (func(i, $('#code' + i))) {
 			break;
 		}
 	}
@@ -69,7 +69,7 @@ Ripper.prototype._send_request = function(url) {
 			_ripper.$page = $(data);
 			_ripper.getModule();
 			NUSchedule.signals.send("on_module_rip_success", _ripper.rip_index);
-		}else{
+		} else {
 			NUSchedule.signals.send("on_module_rip_error", _ripper.rip_index);
 		}
 		_ripper.ripNext();
@@ -79,20 +79,20 @@ Ripper.prototype._send_request = function(url) {
 Ripper.prototype.rip = function() {
 	//url pattern:
 	//https://sit.aces01.nus.edu.sg/cors/jsp/report/ModuleDetailedInfo.jsp?acad_y=2007/2008&sem_c=2&mod_c=AR9999
-	var code = $('#code'+this.rip_index).val().toUpperCase();
+	var code = $('#code' + this.rip_index).val().toUpperCase();
 	var ay = $('#ay').val();
 	var semester = $('#semester').val();
 
 	//if (!debug) {
 		var url = 'https://aces01.nus.edu.sg/cors/jsp/report/ModuleDetailedInfo.jsp?acad_y=';
 		url += ay + '&sem_c=' + semester + '&mod_c=' + code;
-	/*}else{
+	/*} else {
 		var url = 'http://localhost:8888/timetable/m/';
 		url += code + '.htm';
 	}*/
 
 	//give ripper's url to current url
-	if (code != ''){ //if not empty, do ripping
+	if (code != '') { //if not empty, do ripping
 		this._send_request(url);
 	} else {
 		NUSchedule.signals.send("on_module_rip_blank", this.rip_index);
@@ -122,7 +122,7 @@ Ripper.prototype.getModule = function () {
 	var arrLaboratory = new Array();
 	var arrTutLab = this.ripTutorial();
 
-	for (var i=0;i<arrTutLab.length;i++) {
+	for (var i = 0; i < arrTutLab.length; i++) {
 		if (arrTutLab[i].type == 'lab') arrLaboratory.push(arrTutLab[i]);
 		if (arrTutLab[i].type == 'tut') arrTutorial.push(arrTutLab[i]);
 	}
@@ -162,9 +162,9 @@ Ripper.prototype.ripLecture = function() {
 			var res, day, start, end, place;
 			var type;
 
-			for (var i=0;i<nSession;i++) {
-				phrase1 = arrBlock[i*2+1];
-				phrase2 = arrBlock[i*2+2];
+			for (var i = 0; i < nSession; i++) {
+				phrase1 = arrBlock[i * 2 + 1];
+				phrase2 = arrBlock[i * 2 + 2];
 				arrCell = new Array();
 
 				res = /(\w+)\s+From\s+(\d+)\s+hrs\s+to\s+(\d+)\s+hrs\s+in\s+(.+),/.exec(phrase1);
@@ -185,7 +185,9 @@ Ripper.prototype.ripLecture = function() {
 					phrase2.indexOf("ODD") != -1 ? 1 : 0;
 
 				//pushing cells that this session will occupy
-				for (var t=start;t<end;t+=100) { arrCell.push('w'+day+'t'+t); }
+				for (var t = start; t < end; t += 100) {
+					arrCell.push('w' + day + 't' + t);
+				}
 
 				//creating the particular session object, and push into the lecture.
 				arrSession.push(
@@ -227,9 +229,9 @@ Ripper.prototype.ripTutorial = function() {
 			var res, day, start, end, place;
 			var type;
 
-			for (var i=0;i<nSession;i++) {
-				phrase1 = arrBlock[i*2+1];
-				phrase2 = arrBlock[i*2+2];
+			for (var i = 0; i < nSession; i++) {
+				phrase1 = arrBlock[i * 2 + 1];
+				phrase2 = arrBlock[i * 2 + 2];
 				arrCell = new Array();
 
 				res = /(\w+)\s+From\s+(\d+)\s+hrs\s+to\s+(\d+)\s+hrs\s+in\s+(.+),/.exec(phrase1);
@@ -242,7 +244,9 @@ Ripper.prototype.ripTutorial = function() {
 					phrase2.indexOf("ODD") != -1 ? 1 : 0;
 
 				//pushing cells that this session will occupy
-				for (var t=start;t<end;t+=100) { arrCell.push('w'+day+'t'+t); }
+				for (var t = start; t < end; t += 100) {
+					arrCell.push('w' + day + 't' + t);
+				}
 
 				//creating the particular session object, and push into the tutorial
 				arrSession.push(
@@ -264,12 +268,15 @@ Ripper.prototype.ripNext = function() {
 		ripper.rip();
 	} else {
 		$('#ripButton').val('Re-Scan All').mouseup(ripper.start);
-		if (tt.module.length > 0){
+		if (tt.module.length > 0) {
 			//show NEXT button if module>0
 			$("#nextButton").show();
 		}
 		if (this.auto_start) {
-			tt.createTable();tt.createAllNode();st.showSetFunctions();showPage3();
+			tt.createTable();
+			tt.createAllNode();
+			st.showSetFunctions();
+			showPage3();
 			setTimeout("alert('Here you are. Happy testing! :)')", 900);
 		}
 	}
@@ -277,6 +284,13 @@ Ripper.prototype.ripNext = function() {
 };
 
 function convertDay(str) {
-	return {'MONDAY': 1, 'TUESDAY': 2, 'WEDNESDAY': 3,
-	'THURSDAY': 4, 'FRIDAY': 5, 'SATURDAY': 6, 'SUNDAY': 7}[str];
+	return {
+		'MONDAY':	1,
+		'TUESDAY':	2,
+		'WEDNESDAY':	3,
+		'THURSDAY':	4,
+		'FRIDAY':	5,
+		'SATURDAY':	6,
+		'SUNDAY':	7
+	}[str];
 };

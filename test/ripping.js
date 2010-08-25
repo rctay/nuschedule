@@ -17,11 +17,15 @@ var prepare_test_cs1101s = function() {
 		QUnit.equals(lecture.type, "lec", "check Part type");
 		QUnit.equals(lecture.session.length, 2, "check lecture session count");
 
-		var session = lecture.session[0];
-		QUnit.same(
-			[session.day, session.start, session.end, session.type, session.place],
-			[3, 1000, 1200, 0, "LT15"],
-			"check lecture session 1");
+		var _check_session = function(idx, expected) {
+			var session = lecture.session[idx];
+			QUnit.same(
+				[session.day, session.start, session.end, session.type, session.place],
+				expected,
+				"check lecture session "+(idx+1));
+		}
+
+		_check_session(0, [3, 1000, 1200, 0, "LT15"]);
 	});
 };
 

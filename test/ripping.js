@@ -1,3 +1,4 @@
+// total assertions: 9
 var prepare_test_cs1101s = function() {
 	// if the module was ripped correctly, then it will be appended and thus available at pos
 	var pos = tt.module.length;
@@ -31,11 +32,15 @@ var prepare_test_cs1101s = function() {
 };
 
 QUnit.test("test ripping with CS1101S (Sem 1, 2010/2011) (cached)", function() {
+	QUnit.expect(9)
+
 	prepare_test_cs1101s();
 	ripper._send_request("data/2010-11-01-cs1101s.html");
 });
 
 QUnit.test("test ripping with CS1101S (Sem 1, 2010/2011) (live)", function() {
+	QUnit.expect(10);
+
 	prepare_test_cs1101s();
 
 	/*

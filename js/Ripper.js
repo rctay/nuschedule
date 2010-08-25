@@ -49,7 +49,7 @@ Ripper.prototype.start = function() {
 		//start ripping.
 		this.rip_index = 1;
 		tt.module = new Array();
-		ripper.rip();
+		this.rip();
 	}
 };
 
@@ -265,9 +265,9 @@ Ripper.prototype.ripTutorial = function() {
 Ripper.prototype.ripNext = function() {
 
 	if (++this.rip_index <= this.MAX_RIP_INDEX) {
-		ripper.rip();
+		this.rip();
 	} else {
-		$('#ripButton').val('Re-Scan All').mouseup(ripper.start);
+		$('#ripButton').val('Re-Scan All').mouseup(this.start);
 		if (tt.module.length > 0) {
 			//show NEXT button if module>0
 			$("#nextButton").show();

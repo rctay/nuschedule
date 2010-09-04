@@ -25,6 +25,22 @@ var convertDay = (function() {
 	};
 })();
 
+/*
+ * For each #code<n> field, call 'func' with
+ *
+ *  - the current count (n), and
+ *  - the field passed to it (as a jQuery object).
+ *
+ * Iteration is stopped when 'func' returns true.
+ */
+var _foreach_module_field = function(func) {
+	for (var i = 1; i <= MAX_RIP_INDEX; i++) {
+		if (func(i, $('#code' + i))) {
+			break;
+		}
+	}
+};
+
 /**
  * The class definition
  */
@@ -39,27 +55,11 @@ ret.prototype.testApplication = function() {
 	this.auto_start = true;
 };
 
-/*
- * For each #code<n> field, call 'func' with
- *
- *  - the current count (n), and
- *  - the field passed to it (as a jQuery object).
- *
- * Iteration is stopped when 'func' returns true.
- */
-ret.prototype._foreach_module_field = function(func) {
-	for (var i = 1; i <= MAX_RIP_INDEX; i++) {
-		if (func(i, $('#code' + i))) {
-			break;
-		}
-	}
-}
-
 ret.prototype.start = function() {
 
 	//checking if one of them is not blank
 	var proceed = false;
-	this._foreach_module_field(function(i, field) {
+	_foreach_module_field(function(i, field) {
 		if (field.val() != '') {
 			return proceed = true;
 		}
@@ -67,7 +67,7 @@ ret.prototype.start = function() {
 	if (proceed) {
 		$('#ripButton').val('Waiting...').mouseup(function() { return false; });
 		$('#nextButton').hide();
-		this._foreach_module_field(function(i, field) {
+		_foreach_module_field(function(i, field) {
 			if (field.val() != '') {
 				NUSchedule.signals.send("on_module_rip_start", i);
 			}

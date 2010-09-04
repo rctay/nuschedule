@@ -1,6 +1,29 @@
 //http://localhost:8888/timetable/readModule.php?url=http://localhost:8888/timetable/m/cs2100.htm
 var Ripper = (function($) {
 
+/**
+ * Invisible stuff
+ */
+var convertDay = (function() {
+	// the day->number mapping - "cached"
+	var MAPPING = {
+		'MONDAY':	1,
+		'TUESDAY':	2,
+		'WEDNESDAY':	3,
+		'THURSDAY':	4,
+		'FRIDAY':	5,
+		'SATURDAY':	6,
+		'SUNDAY':	7
+	};
+	// return a closure - this is the actual function that will be exposed.
+	return function(str) {
+		return MAPPING[str];
+	};
+})();
+
+/**
+ * The class definition
+ */
 var ret = function() {
 	this.MAX_RIP_INDEX = 12;
 
@@ -287,20 +310,3 @@ ret.prototype.ripNext = function() {
 
 return ret;
 })($);
-
-var convertDay = (function() {
-	// the day->number mapping - "cached"
-	var MAPPING = {
-		'MONDAY':	1,
-		'TUESDAY':	2,
-		'WEDNESDAY':	3,
-		'THURSDAY':	4,
-		'FRIDAY':	5,
-		'SATURDAY':	6,
-		'SUNDAY':	7
-	};
-	// return a closure - this is the actual function that will be exposed.
-	return function(str) {
-		return MAPPING[str];
-	};
-})();

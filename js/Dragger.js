@@ -9,8 +9,8 @@ document.onmousedown = function(e) {
 	if (targetElem.tagName == 'B') targetElem = targetElem.parentNode; //fix <B> problem in safari
 	if (!targetElem.id) return;
 	jObj = $('#'+targetElem.id); //work like $(this)
-	
-	
+
+
 	//pressing nodes/tabs
 	if (/(^m_|^n_)/.test(targetElem.id)) {
 		dragElem = jObj.parent();
@@ -20,7 +20,7 @@ document.onmousedown = function(e) {
 		iDiffX = e.screenX;
 		iDiffY = e.screenY;
 	}
-	
+
 	//pressing module nodes
 	if (/^k_/.test(targetElem.id)) {
 		if (targetElem.className == 'module_node') {
@@ -34,7 +34,7 @@ document.onmousedown = function(e) {
 			tt.removeNode(jObj);
 		}
 	}
-	
+
 	switch(targetElem.tagName){
 		case 'INPUT': case 'A': case 'TEXTAREA': case 'SELECT': case 'OPTION':
 		break;
@@ -48,14 +48,14 @@ document.onmouseup = function(e) {
 	if (targetElem.tagName == 'B') targetElem = targetElem.parentNode; //fix <B> problem in safari
 	if (!targetElem.id) return;
 	jObj = $('#'+targetElem.id); //work like $(this)
-	
+
 	if (dragging) {
 		removeAvailableCell();
 		dragElem.css('left','0px').css('top','0px').fadeTo(100,0.6);
 	}
-	
+
 	dragging = false;
-	
+
 	if (/(^b_|^t_)/.test(targetElem.id)) {
 		tt.swapNode(jObj, dragElem);
 		deselectOther(jObj);
@@ -77,7 +77,7 @@ document.onmouseover = function(e) {
 	if (targetElem.tagName == 'B') targetElem = targetElem.parentNode; //fix <B> problem in safari
 	if (!targetElem.id) return;
 	jObj = $('#'+targetElem.id); //work like $(this)
-	
+
 	if (/(^b_|^t_)/.test(targetElem.id)) {
 		jObj.siblings().andSelf().css('backgroundColor', '#a55').css('zIndex',30);
 	}
@@ -88,7 +88,7 @@ document.onmouseout = function(e) {
 	if (targetElem.tagName == 'B') targetElem = targetElem.parentNode; //fix <B> problem in safari
 	if (!targetElem.id) return;
 	jObj = $('#'+targetElem.id); //work like $(this)
-	
+
 	if (/(^b_|^t_)/.test(targetElem.id)) {
 		jObj.siblings().andSelf().css('backgroundColor', '#555').css('zIndex',1);
 	}

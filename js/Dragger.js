@@ -117,20 +117,23 @@ function showAvailableCell() {
 	var arrtid = tid.split('_');
 	//rip
 	var md = parseInt(arrtid[1]); //module id
-	var type = arrtid[2]; //module type
 
-	if (type == 'lec') {
+	switch (arrtid[2]) {
+	case 'lec':
 		for (var p=0; p < tt.module[md].lecture.length; p++) {
 			tt.showNode(tt.module[md].code, tt.module[md].lecture[p], md, p);
 		}
-	} else if (type == 'tut') {
+		break;
+	case 'tut':
 		for (var p=0; p < tt.module[md].tutorial.length; p++) {
 			tt.showNode(tt.module[md].code, tt.module[md].tutorial[p], md, p);
 		}
-	} else if (type == 'lab') {
+		break;
+	case 'lab':
 		for (var p=0; p < tt.module[md].laboratory.length; p++) {
 			tt.showNode(tt.module[md].code, tt.module[md].laboratory[p], md, p);
 		}
+		break;
 	}
 };
 

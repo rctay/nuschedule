@@ -113,22 +113,22 @@ function deselectOther(elem) {
 };
 
 function showAvailableCell() {
-	tid = dragElem.attr('id'); //like: n_0_tut_1
-	arrtid = tid.split('_');
+	var tid = dragElem.attr('id'); //like: n_0_tut_1
+	var arrtid = tid.split('_');
 	//rip
-	md = parseInt(arrtid[1]); //module id
-	type = arrtid[2]; //module type
+	var md = parseInt(arrtid[1]); //module id
+	var type = arrtid[2]; //module type
 
 	if (type == 'lec') {
-		for (p=0; p < tt.module[md].lecture.length; p++) {
+		for (var p=0; p < tt.module[md].lecture.length; p++) {
 			tt.showNode(tt.module[md].code, tt.module[md].lecture[p], md, p);
 		}
 	} else if (type == 'tut') {
-		for (p=0; p < tt.module[md].tutorial.length; p++) {
+		for (var p=0; p < tt.module[md].tutorial.length; p++) {
 			tt.showNode(tt.module[md].code, tt.module[md].tutorial[p], md, p);
 		}
 	} else if (type == 'lab') {
-		for (p=0; p < tt.module[md].laboratory.length; p++) {
+		for (var p=0; p < tt.module[md].laboratory.length; p++) {
 			tt.showNode(tt.module[md].code, tt.module[md].laboratory[p], md, p);
 		}
 	}

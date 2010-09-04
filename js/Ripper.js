@@ -4,6 +4,9 @@ var Ripper = (function($) {
 /**
  * Invisible stuff
  */
+
+var LESSON_TIME_RE = /(\w+)\s+From\s+(\d+)\s+hrs\s+to\s+(\d+)\s+hrs\s+in\s+(.+),/;
+
 var convertDay = (function() {
 	// the day->number mapping - "cached"
 	var MAPPING = {
@@ -192,7 +195,7 @@ ret.prototype.ripLecture = function() {
 				phrase2 = arrBlock[i * 2 + 2];
 				arrCell = new Array();
 
-				res = /(\w+)\s+From\s+(\d+)\s+hrs\s+to\s+(\d+)\s+hrs\s+in\s+(.+),/.exec(phrase1);
+				res = LESSON_TIME_RE.exec(phrase1);
 				day = convertDay(res[1]);
 				start = parseInt(res[2]);
 				end = parseInt(res[3]);
@@ -259,7 +262,7 @@ ret.prototype.ripTutorial = function() {
 				phrase2 = arrBlock[i * 2 + 2];
 				arrCell = new Array();
 
-				res = /(\w+)\s+From\s+(\d+)\s+hrs\s+to\s+(\d+)\s+hrs\s+in\s+(.+),/.exec(phrase1);
+				res = LESSON_TIME_RE.exec(phrase1);
 				day = convertDay(res[1]);
 				start = parseInt(res[2]);
 				end = parseInt(res[3]);

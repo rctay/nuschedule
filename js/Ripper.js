@@ -1,5 +1,7 @@
 //http://localhost:8888/timetable/readModule.php?url=http://localhost:8888/timetable/m/cs2100.htm
-function Ripper() {
+var Ripper = (function($) {
+
+var ret = function() {
 	this.MAX_RIP_INDEX = 12;
 
 	this.url = '';
@@ -7,7 +9,7 @@ function Ripper() {
 	this.auto_start = false;
 };
 
-Ripper.prototype.testApplication = function() {
+ret.prototype.testApplication = function() {
 	if (! this.auto_start) this.start();
 	this.auto_start = true;
 };
@@ -20,7 +22,7 @@ Ripper.prototype.testApplication = function() {
  *
  * Iteration is stopped when 'func' returns true.
  */
-Ripper.prototype._foreach_module_field = function(func) {
+ret.prototype._foreach_module_field = function(func) {
 	for (var i = 1; i <= this.MAX_RIP_INDEX; i++) {
 		if (func(i, $('#code' + i))) {
 			break;
@@ -28,7 +30,7 @@ Ripper.prototype._foreach_module_field = function(func) {
 	}
 }
 
-Ripper.prototype.start = function() {
+ret.prototype.start = function() {
 
 	//checking if one of them is not blank
 	var proceed = false;
@@ -58,7 +60,7 @@ Ripper.prototype.start = function() {
  *
  * Available externally for testing purposes.
  */
-Ripper.prototype._send_request = function(url) {
+ret.prototype._send_request = function(url) {
 	this.url = url;
 
 	var _ripper = this;
@@ -76,7 +78,7 @@ Ripper.prototype._send_request = function(url) {
 	});
 };
 
-Ripper.prototype.rip = function() {
+ret.prototype.rip = function() {
 	//url pattern:
 	//https://sit.aces01.nus.edu.sg/cors/jsp/report/ModuleDetailedInfo.jsp?acad_y=2007/2008&sem_c=2&mod_c=AR9999
 	var code = $('#code' + this.rip_index).val().toUpperCase();
@@ -100,7 +102,7 @@ Ripper.prototype.rip = function() {
 	}
 };
 
-Ripper.prototype.getModule = function () {
+ret.prototype.getModule = function () {
 	/** All regex into XPath / jQuery selectors **/
 	/** Benchmark speed? **/
 	// var $moduleInfoTable = $("table:first>tbody>tr:eq(1)>td>table>tbody>tr:eq(2)>td>table>tbody", this.$page);
@@ -139,7 +141,7 @@ Ripper.prototype.getModule = function () {
 	tt.module.push(oModule);
 };
 
-Ripper.prototype.ripLecture = function() {
+ret.prototype.ripLecture = function() {
 
 	var $lectureTable = $("table.tableframe:eq(0) ~ table:eq(0)", this.$page);
 
@@ -203,7 +205,7 @@ Ripper.prototype.ripLecture = function() {
 	return arrLecture;
 };
 
-Ripper.prototype.ripTutorial = function() {
+ret.prototype.ripTutorial = function() {
 
 	var $tutorialTable = $("table.tableframe:eq(0) ~ table:eq(1)", this.$page);
 
@@ -262,7 +264,7 @@ Ripper.prototype.ripTutorial = function() {
 	return arrTutorial;
 };
 
-Ripper.prototype.ripNext = function() {
+ret.prototype.ripNext = function() {
 
 	if (++this.rip_index <= this.MAX_RIP_INDEX) {
 		this.rip();
@@ -282,6 +284,9 @@ Ripper.prototype.ripNext = function() {
 	}
 
 };
+
+return ret;
+})($);
 
 var convertDay = (function() {
 	// the day->number mapping - "cached"

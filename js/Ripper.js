@@ -1,16 +1,29 @@
 //http://localhost:8888/timetable/readModule.php?url=http://localhost:8888/timetable/m/cs2100.htm
-function Ripper() {
-	this.MAX_RIP_INDEX = 12;
+var Ripper = (function($) {
 
-	this.url = '';
-	this.sPage = '';
-	this.auto_start = false;
-};
+/**
+ * Invisible stuff
+ */
 
-Ripper.prototype.testApplication = function() {
-	if (! this.auto_start) this.start();
-	this.auto_start = true;
-};
+var MAX_RIP_INDEX = 12;
+var LESSON_TIME_RE = /(\w+)\s+From\s+(\d+)\s+hrs\s+to\s+(\d+)\s+hrs\s+in\s+(.+),/;
+
+var convertDay = (function() {
+	// the day->number mapping - "cached"
+	var MAPPING = {
+		'MONDAY':	1,
+		'TUESDAY':	2,
+		'WEDNESDAY':	3,
+		'THURSDAY':	4,
+		'FRIDAY':	5,
+		'SATURDAY':	6,
+		'SUNDAY':	7
+	};
+	// return a closure - this is the actual function that will be exposed.
+	return function(str) {
+		return MAPPING[str];
+	};
+})();
 
 /*
  * For each #code<n> field, call 'func' with
@@ -20,19 +33,33 @@ Ripper.prototype.testApplication = function() {
  *
  * Iteration is stopped when 'func' returns true.
  */
-Ripper.prototype._foreach_module_field = function(func) {
-	for (var i = 1; i <= this.MAX_RIP_INDEX; i++) {
+var _foreach_module_field = function(func) {
+	for (var i = 1; i <= MAX_RIP_INDEX; i++) {
 		if (func(i, $('#code' + i))) {
 			break;
 		}
 	}
-}
+};
 
-Ripper.prototype.start = function() {
+/**
+ * The class definition
+ */
+var ret = function() {
+	this.url = '';
+	this.sPage = '';
+	this.auto_start = false;
+};
+
+ret.prototype.testApplication = function() {
+	if (! this.auto_start) this.start();
+	this.auto_start = true;
+};
+
+ret.prototype.start = function() {
 
 	//checking if one of them is not blank
 	var proceed = false;
-	this._foreach_module_field(function(i, field) {
+	_foreach_module_field(function(i, field) {
 		if (field.val() != '') {
 			return proceed = true;
 		}
@@ -40,7 +67,7 @@ Ripper.prototype.start = function() {
 	if (proceed) {
 		$('#ripButton').val('Waiting...').mouseup(function() { return false; });
 		$('#nextButton').hide();
-		this._foreach_module_field(function(i, field) {
+		_foreach_module_field(function(i, field) {
 			if (field.val() != '') {
 				NUSchedule.signals.send("on_module_rip_start", i);
 			}
@@ -58,7 +85,7 @@ Ripper.prototype.start = function() {
  *
  * Available externally for testing purposes.
  */
-Ripper.prototype._send_request = function(url) {
+ret.prototype._send_request = function(url) {
 	this.url = url;
 
 	var _ripper = this;
@@ -76,7 +103,7 @@ Ripper.prototype._send_request = function(url) {
 	});
 };
 
-Ripper.prototype.rip = function() {
+ret.prototype.rip = function() {
 	//url pattern:
 	//https://sit.aces01.nus.edu.sg/cors/jsp/report/ModuleDetailedInfo.jsp?acad_y=2007/2008&sem_c=2&mod_c=AR9999
 	var code = $('#code' + this.rip_index).val().toUpperCase();
@@ -100,7 +127,7 @@ Ripper.prototype.rip = function() {
 	}
 };
 
-Ripper.prototype.getModule = function () {
+ret.prototype.getModule = function () {
 	/** All regex into XPath / jQuery selectors **/
 	/** Benchmark speed? **/
 	// var $moduleInfoTable = $("table:first>tbody>tr:eq(1)>td>table>tbody>tr:eq(2)>td>table>tbody", this.$page);
@@ -139,7 +166,7 @@ Ripper.prototype.getModule = function () {
 	tt.module.push(oModule);
 };
 
-Ripper.prototype.ripLecture = function() {
+ret.prototype.ripLecture = function() {
 
 	var $lectureTable = $("table.tableframe:eq(0) ~ table:eq(0)", this.$page);
 
@@ -167,7 +194,7 @@ Ripper.prototype.ripLecture = function() {
 				phrase2 = arrBlock[i * 2 + 2];
 				arrCell = new Array();
 
-				res = /(\w+)\s+From\s+(\d+)\s+hrs\s+to\s+(\d+)\s+hrs\s+in\s+(.+),/.exec(phrase1);
+				res = LESSON_TIME_RE.exec(phrase1);
 				day = convertDay(res[1]);
 				start = parseInt(res[2]);
 				end = parseInt(res[3]);
@@ -203,7 +230,7 @@ Ripper.prototype.ripLecture = function() {
 	return arrLecture;
 };
 
-Ripper.prototype.ripTutorial = function() {
+ret.prototype.ripTutorial = function() {
 
 	var $tutorialTable = $("table.tableframe:eq(0) ~ table:eq(1)", this.$page);
 
@@ -234,7 +261,7 @@ Ripper.prototype.ripTutorial = function() {
 				phrase2 = arrBlock[i * 2 + 2];
 				arrCell = new Array();
 
-				res = /(\w+)\s+From\s+(\d+)\s+hrs\s+to\s+(\d+)\s+hrs\s+in\s+(.+),/.exec(phrase1);
+				res = LESSON_TIME_RE.exec(phrase1);
 				day = convertDay(res[1]);
 				start = parseInt(res[2]);
 				end = parseInt(res[3]);
@@ -262,9 +289,9 @@ Ripper.prototype.ripTutorial = function() {
 	return arrTutorial;
 };
 
-Ripper.prototype.ripNext = function() {
+ret.prototype.ripNext = function() {
 
-	if (++this.rip_index <= this.MAX_RIP_INDEX) {
+	if (++this.rip_index <= MAX_RIP_INDEX) {
 		this.rip();
 	} else {
 		$('#ripButton').val('Re-Scan All').mouseup(this.start);
@@ -283,19 +310,7 @@ Ripper.prototype.ripNext = function() {
 
 };
 
-var convertDay = (function() {
-	// the day->number mapping - "cached"
-	var MAPPING = {
-		'MONDAY':	1,
-		'TUESDAY':	2,
-		'WEDNESDAY':	3,
-		'THURSDAY':	4,
-		'FRIDAY':	5,
-		'SATURDAY':	6,
-		'SUNDAY':	7
-	};
-	// return a closure - this is the actual function that will be exposed.
-	return function(str) {
-		return MAPPING[str];
-	};
-})();
+// expose MAX_RIP_INDEX
+ret.MAX_RIP_INDEX = MAX_RIP_INDEX;
+return ret;
+})($);

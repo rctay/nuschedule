@@ -5,6 +5,7 @@ var Ripper = (function($) {
  * Invisible stuff
  */
 
+var MAX_RIP_INDEX = 12;
 var LESSON_TIME_RE = /(\w+)\s+From\s+(\d+)\s+hrs\s+to\s+(\d+)\s+hrs\s+in\s+(.+),/;
 
 var convertDay = (function() {
@@ -28,8 +29,6 @@ var convertDay = (function() {
  * The class definition
  */
 var ret = function() {
-	this.MAX_RIP_INDEX = 12;
-
 	this.url = '';
 	this.sPage = '';
 	this.auto_start = false;
@@ -49,7 +48,7 @@ ret.prototype.testApplication = function() {
  * Iteration is stopped when 'func' returns true.
  */
 ret.prototype._foreach_module_field = function(func) {
-	for (var i = 1; i <= this.MAX_RIP_INDEX; i++) {
+	for (var i = 1; i <= MAX_RIP_INDEX; i++) {
 		if (func(i, $('#code' + i))) {
 			break;
 		}
@@ -292,7 +291,7 @@ ret.prototype.ripTutorial = function() {
 
 ret.prototype.ripNext = function() {
 
-	if (++this.rip_index <= this.MAX_RIP_INDEX) {
+	if (++this.rip_index <= MAX_RIP_INDEX) {
 		this.rip();
 	} else {
 		$('#ripButton').val('Re-Scan All').mouseup(this.start);
@@ -311,5 +310,7 @@ ret.prototype.ripNext = function() {
 
 };
 
+// expose MAX_RIP_INDEX
+ret.MAX_RIP_INDEX = MAX_RIP_INDEX;
 return ret;
 })($);

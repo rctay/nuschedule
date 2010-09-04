@@ -24,6 +24,26 @@ var convertDay = (function() {
 		return MAPPING[str];
 	};
 })();
+var get_module_url = (function() {
+	// returns a string "key1=val1&key2=val2&..."
+	var url_params = function(obj) {
+		var ret = [];
+		for (var i in obj) {
+			ret.push(i+"="+obj[i]);
+		}
+		return ret.join("&");
+	};
+	return function(year, semester, code) {
+		//url pattern:
+		//https://sit.aces01.nus.edu.sg/cors/jsp/report/ModuleDetailedInfo.jsp?acad_y=2007/2008&sem_c=2&mod_c=AR9999
+		return 'https://aces01.nus.edu.sg/cors/jsp/report/ModuleDetailedInfo.jsp?'
+			+ url_params({
+				acad_y: year,
+				sem_c: semester,
+				mod_c: code
+			});
+	};
+})();
 
 /*
  * For each #code<n> field, call 'func' with
@@ -104,15 +124,11 @@ ret.prototype._send_request = function(url) {
 };
 
 ret.prototype.rip = function() {
-	//url pattern:
-	//https://sit.aces01.nus.edu.sg/cors/jsp/report/ModuleDetailedInfo.jsp?acad_y=2007/2008&sem_c=2&mod_c=AR9999
 	var code = $('#code' + this.rip_index).val().toUpperCase();
 	var ay = $('#ay').val();
 	var semester = $('#semester').val();
 
 	//if (!debug) {
-		var url = 'https://aces01.nus.edu.sg/cors/jsp/report/ModuleDetailedInfo.jsp?acad_y=';
-		url += ay + '&sem_c=' + semester + '&mod_c=' + code;
 	/*} else {
 		var url = 'http://localhost:8888/timetable/m/';
 		url += code + '.htm';
@@ -120,7 +136,7 @@ ret.prototype.rip = function() {
 
 	//give ripper's url to current url
 	if (code != '') { //if not empty, do ripping
-		this._send_request(url);
+		this._send_request(get_module_url(ay, semester, code));
 	} else {
 		NUSchedule.signals.send("on_module_rip_blank", this.rip_index);
 		this.ripNext();

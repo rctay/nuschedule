@@ -7,7 +7,6 @@ document.onmousedown = function(e) {
 	e = (jQuery.browser.msie) ? window.event : e;
 	targetElem = (jQuery.browser.msie) ? e.srcElement : e.target;
 	if (targetElem.tagName == 'B') targetElem = targetElem.parentNode; //fix <B> problem in safari
-	if (!targetElem.id) return;
 	jObj = $('#'+targetElem.id); //work like $(this)
 
 
@@ -26,19 +25,23 @@ document.onmousedown = function(e) {
 		if (targetElem.className == 'module_node') {
 			targetElem.className = 'module_node_sel';
 			tt.swapNode(jObj, deselectOther(jObj));
-		}else if(targetElem.className == 'module_node_sel') {
+		} else if (targetElem.className == 'module_node_sel') {
 			targetElem.className = 'module_node_1';
 			tt.swapNode(jObj, jObj, true); //swap itself, make it fixed
-		}else{
+		} else {
 			targetElem.className = 'module_node';
 			tt.removeNode(jObj);
 		}
 	}
 
-	switch(targetElem.tagName){
-		case 'INPUT': case 'A': case 'TEXTAREA': case 'SELECT': case 'OPTION':
+	switch (targetElem.tagName) {
+	case 'INPUT':
+	case 'A':
+	case 'TEXTAREA':
+	case 'SELECT':
+	case 'OPTION':
 		break;
-		default:
+	default:
 		return false;
 	}
 };
@@ -46,7 +49,6 @@ document.onmousedown = function(e) {
 document.onmouseup = function(e) {
 	targetElem = (jQuery.browser.msie) ? e.srcElement : e.target;
 	if (targetElem.tagName == 'B') targetElem = targetElem.parentNode; //fix <B> problem in safari
-	if (!targetElem.id) return;
 	jObj = $('#'+targetElem.id); //work like $(this)
 
 	if (dragging) {
@@ -75,7 +77,6 @@ document.onmousemove = function(e) {
 document.onmouseover = function(e) {
 	targetElem = (jQuery.browser.msie) ? e.srcElement : e.target;
 	if (targetElem.tagName == 'B') targetElem = targetElem.parentNode; //fix <B> problem in safari
-	if (!targetElem.id) return;
 	jObj = $('#'+targetElem.id); //work like $(this)
 
 	if (/(^b_|^t_)/.test(targetElem.id)) {
@@ -86,7 +87,6 @@ document.onmouseover = function(e) {
 document.onmouseout = function(e) {
 	targetElem = (jQuery.browser.msie) ? e.srcElement : e.target;
 	if (targetElem.tagName == 'B') targetElem = targetElem.parentNode; //fix <B> problem in safari
-	if (!targetElem.id) return;
 	jObj = $('#'+targetElem.id); //work like $(this)
 
 	if (/(^b_|^t_)/.test(targetElem.id)) {
@@ -118,17 +118,15 @@ function showAvailableCell() {
 	type = arrtid[2]; //module type
 
 	if (type == 'lec') {
-		for (p=0;p<tt.module[md].lecture.length;p++) {
+		for (p=0; p < tt.module[md].lecture.length; p++) {
 			tt.showNode(tt.module[md].code, tt.module[md].lecture[p], md, p);
 		}
-	}
-	else if (type == 'tut') {
-		for (p=0;p<tt.module[md].tutorial.length;p++) {
+	} else if (type == 'tut') {
+		for (p=0; p < tt.module[md].tutorial.length; p++) {
 			tt.showNode(tt.module[md].code, tt.module[md].tutorial[p], md, p);
 		}
-	}
-	else if (type == 'lab') {
-		for (p=0;p<tt.module[md].laboratory.length;p++) {
+	} else if (type == 'lab') {
+		for (p=0; p < tt.module[md].laboratory.length; p++) {
 			tt.showNode(tt.module[md].code, tt.module[md].laboratory[p], md, p);
 		}
 	}

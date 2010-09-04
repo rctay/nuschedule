@@ -1,9 +1,11 @@
+var handlers = (function($) {
+
 var dragging = false;
 var dragElem;
 var iDiffX = 0;
 var iDiffY = 0;
 
-document.onmousedown = function(e) {
+var onmousedown = function(e) {
 	e = (jQuery.browser.msie) ? window.event : e;
 	targetElem = (jQuery.browser.msie) ? e.srcElement : e.target;
 	if (targetElem.tagName == 'B') targetElem = targetElem.parentNode; //fix <B> problem in safari
@@ -46,7 +48,7 @@ document.onmousedown = function(e) {
 	}
 };
 
-document.onmouseup = function(e) {
+var onmouseup = function(e) {
 	targetElem = (jQuery.browser.msie) ? e.srcElement : e.target;
 	if (targetElem.tagName == 'B') targetElem = targetElem.parentNode; //fix <B> problem in safari
 	jObj = $('#'+targetElem.id); //work like $(this)
@@ -65,7 +67,7 @@ document.onmouseup = function(e) {
 	}
 };
 
-document.onmousemove = function(e) {
+var onmousemove = function(e) {
 	//the dragging part
 	if (jQuery.browser.msie) e = window.event;
 	if (dragging) {
@@ -74,7 +76,7 @@ document.onmousemove = function(e) {
 	}
 };
 
-document.onmouseover = function(e) {
+var onmouseover = function(e) {
 	targetElem = (jQuery.browser.msie) ? e.srcElement : e.target;
 	if (targetElem.tagName == 'B') targetElem = targetElem.parentNode; //fix <B> problem in safari
 	jObj = $('#'+targetElem.id); //work like $(this)
@@ -84,7 +86,7 @@ document.onmouseover = function(e) {
 	}
 }
 
-document.onmouseout = function(e) {
+var onmouseout = function(e) {
 	targetElem = (jQuery.browser.msie) ? e.srcElement : e.target;
 	if (targetElem.tagName == 'B') targetElem = targetElem.parentNode; //fix <B> problem in safari
 	jObj = $('#'+targetElem.id); //work like $(this)
@@ -139,3 +141,16 @@ function removeAvailableCell() {
 	}
 	tt.resetTempCell(); //important!!!
 };
+
+return {
+	onmousedown: onmousedown,
+	onmouseup: onmouseup,
+	onmousemove: onmousemove,
+	onmouseover: onmouseover,
+	onmouseout: onmouseout
+};
+})($);
+
+for (var i in handlers) {
+	document[i] = handlers[i];
+}

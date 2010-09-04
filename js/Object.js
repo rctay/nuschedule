@@ -2,7 +2,7 @@ function Module() {
 	this.code = '';
 	this.link = '';
 	this.exam = '';
-	this.lecture = new Array();
+	this.lectures = new Lecture_List();
 	this.tutorial = new Array();
 	this.laboratory = new Array();
 };
@@ -33,3 +33,13 @@ function Part(title, type, arrSession) {
 	this.type = type;
 	this.session = arrSession;
 };
+
+var Lecture_List = (function($) {
+	var ret = function() {
+		this.parts = [];
+	};
+	ret.prototype.add_part = function(title, sessions) {
+		this.parts.push(new Part(title, 'lec', sessions));
+	};
+	return ret;
+})($);

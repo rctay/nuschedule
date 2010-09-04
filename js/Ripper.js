@@ -159,8 +159,11 @@ ret.prototype.getModule = function () {
 	var examDate =
 		$("tr:eq(5)>td:eq(1)", $moduleInfoTable).text().trim().replace(/\s+(A|P)M$/, "");
 
+	//generating new module object
+	var oModule = new Module();
+
 	//ripping lecture, tutorial and laboratory.
-	var arrLecture = this.ripLecture();
+	this.ripLecture(oModule.lectures);
 	var arrTutorial = new Array();
 	var arrLaboratory = new Array();
 	var arrTutLab = this.ripTutorial();
@@ -170,23 +173,18 @@ ret.prototype.getModule = function () {
 		if (arrTutLab[i].type == 'tut') arrTutorial.push(arrTutLab[i]);
 	}
 
-	//generating new module object
-	var oModule = new Module();
 	oModule.code = moduleCode;
 	oModule.link = url;
 	oModule.exam = examDate;
-	oModule.lecture = arrLecture;
 	oModule.laboratory = arrLaboratory;
 	oModule.tutorial = arrTutorial;
 
 	tt.module.push(oModule);
 };
 
-ret.prototype.ripLecture = function() {
+ret.prototype.ripLecture = function(lectures) {
 
 	var $lectureTable = $("table.tableframe:eq(0) ~ table:eq(0)", this.$page);
-
-	var arrLecture = new Array();
 
 	// if (! /No Lecture Class/.test(this.sPage)) { //has lecture
 		//ripping all the lectures
@@ -238,12 +236,10 @@ ret.prototype.ripLecture = function() {
 			}//end of session manipulation
 
 			//insert new lecture
-			arrLecture.push(new Part(title, 'lec', arrSession));
+			lectures.add_part(title, arrSession);
 		});
 
 	// }//end if
-
-	return arrLecture;
 };
 
 ret.prototype.ripTutorial = function() {

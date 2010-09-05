@@ -139,7 +139,7 @@ function showAvailableCell() {
 };
 
 function removeAvailableCell() {
-	tempNodeMaster = document.getElementById('tempNodeMaster');
+	var tempNodeMaster = document.getElementById('tempNodeMaster');
 	while (tempNodeMaster.hasChildNodes()) {
 		tempNodeMaster.removeChild(tempNodeMaster.lastChild);
 	}

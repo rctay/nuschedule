@@ -31,7 +31,7 @@ DIST_MIN_FILE = $(DIST_DIR)/src.min.js
 
 all: $(DIST_MIN_FILE)
 
-$(SRC_FILES):
+init:
 	@echo -n ""; \
 	# copy Makefile variables into shell, and put them into a list \
 	REPOS=( $(REPOS) ); \
@@ -50,6 +50,8 @@ $(SRC_FILES):
 				|| exit $$?; \
 		}; \
 	done
+
+$(SRC_FILES): init
 
 $(DIST_DIR):
 	@mkdir -p $(DIST_DIR)

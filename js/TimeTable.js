@@ -23,9 +23,9 @@ function TimeTable() {
 
 TimeTable.prototype.resetTable = function() {
 	this.cell = new Array(6);
-	for (i = 0; i < 6; i++) {
+	for (var i = 0; i < 6; i++) {
 		this.cell[i] = new Array(14);
-		for (j = 0; j < 14; j++) {
+		for (var j = 0; j < 14; j++) {
 			this.cell[i][j] = [0,0,0,0,0,0,0,0,0,0,0,0]; //12 tabs maximum...although.. hmm
 		}
 	}
@@ -37,8 +37,8 @@ TimeTable.prototype.createTable = function() {
 	//cell manipulation
 	var elemTable = $('<div></div>').attr('id', 'tableMaster');
 
-	for (i = 0; i < 6; i++) {
-		for (j = 0; j < 14; j++) {
+	for (var i = 0; i < 6; i++) {
+		for (var j = 0; j < 14; j++) {
 			$("<div></div>")
 				.addClass('cell')
 				.attr('id', 'w' + (i + 1) + 't' + (j * 100 + 800))
@@ -74,7 +74,7 @@ TimeTable.prototype.createAllNode = function(fixedArray, onTableArray) {
 		this.createModuleViewer(fixedArray, onTableArray);
 		this.resetTable();
 
-		for (r=0; r < onTableArray.length; r++) {
+		for (var r=0; r < onTableArray.length; r++) {
 			str = onTableArray[r];
 			arr = str.split('_');
 			modPos = parseInt(arr[0]);
@@ -93,7 +93,7 @@ TimeTable.prototype.createAllNode = function(fixedArray, onTableArray) {
 		this.createModuleViewer();
 
 		//creating all nodes
-		for (m = 0; m < this.module.length; m++) {
+		for (var m = 0; m < this.module.length; m++) {
 			moduleCode = this.module[m].code;
 
 			if (this.module[m].lecture.length > 0) {
@@ -122,7 +122,7 @@ TimeTable.prototype.createModuleViewer = function (fixedArray, onTableArray) {
 		/** background colours, these are constants to be put somewhere **/
 		var background = {'lecture': '#eee', 'tutorial': '#eec', 'laboratory': '#cee'};
 		innerHTML += '<div style="position:relative">';
-		for (n = 0; n < this.module[m][type].length; n++) {
+		for (var n = 0; n < this.module[m][type].length; n++) {
 			if (this.module[m][type][n].session.length == 0) continue; //skip this object if no session found
 			t += Math.floor(n / 6) * 17;
 			l = n%6 * 21;
@@ -150,7 +150,7 @@ TimeTable.prototype.createModuleViewer = function (fixedArray, onTableArray) {
 	hasArray = (typeof onTableArray != 'undefined');
 
 	/** loop through each module **/
-	for (m = 0; m < this.module.length; m++) {
+	for (var m = 0; m < this.module.length; m++) {
 		var top = Math.floor(m / 6) * 115 + 420;
 		var left = (m % 6) * 130 + 25;
 		elemModule = document.createElement('div');
@@ -196,7 +196,7 @@ TimeTable.prototype.createNode = function(moduleCode, obj, modulePos, objPos, fi
 	elemNodeMaster = document.getElementById('nodeMaster');
 	elemSubNode = document.createElement('div');
 
-	for (i = 0; i < obj.session.length; i++) {
+	for (var i = 0; i < obj.session.length; i++) {
 
 		sessionLength = obj.session[i].cell.length;
 		startingCell = obj.session[i].cell[0];
@@ -263,7 +263,7 @@ TimeTable.prototype.showNode = function(moduleCode, obj, modulePos, objPos) { //
 	//if the obj is fixed, why show? just skip all.
 	if (this.fixedArray.indexOf(modulePos+'_'+obj.type+'_'+objPos) >= 0) return;
 
-	for (i = 0; i < obj.session.length; i++) {
+	for (var i = 0; i < obj.session.length; i++) {
 
 		sessionLength = obj.session[i].cell.length;
 		startingCell = obj.session[i].cell[0];
@@ -361,7 +361,7 @@ TimeTable.prototype.unmark = function (obj, nodeId) { //take in a Part object
 	//convert nodeId (s_0_lec_0) to n_0_lec_0
 	nodeId = 'n'+nodeId.substring(1, nodeId.length);
 
-	for (u = 0; u < obj.session.length; u++) { //loop through
+	for (var u = 0; u < obj.session.length; u++) { //loop through
 		firstCell = obj.session[u].cell[0]; //Like: w1t800
 
 		//rip out the col and row
@@ -423,9 +423,9 @@ TimeTable.prototype.getTempCell = function(id) {
 
 TimeTable.prototype.resetTempCell = function() {
 	this.tempCell = new Array(6);
-	for (i = 0; i < 6; i++) {
+	for (var i = 0; i < 6; i++) {
 		this.tempCell[i] = new Array(14);
-		for (j = 0; j < 14; j++) {
+		for (var j = 0; j < 14; j++) {
 			this.tempCell[i][j] = 0;
 		}
 	}

@@ -25,9 +25,11 @@ DIST_MIN_FILE = $(DIST_DIR)/src.min.js
 
 all: $(DIST_MIN_FILE)
 
-$(DIST_FILE): $(SRC_FILES)
-	@echo "Combining source files"
+$(DIST_DIR):
 	@mkdir -p $(DIST_DIR)
+
+$(DIST_FILE): $(DIST_DIR) $(SRC_FILES)
+	@echo "Combining source files"
 	@cat $(SRC_FILES) > $(DIST_FILE)
 
 $(DIST_MIN_FILE): $(DIST_FILE)

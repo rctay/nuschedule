@@ -1,11 +1,18 @@
-SRC_DIR = js
 BUILD_DIR = build
+
+# list of repos-branches - each repo corresponds to a branch
+REPOS = $(BUILD_DIR)/src \
+	$(BUILD_DIR)/pages
+BRANCHES = rc/master \
+	gh-pages
+# for faking named arrays
+LEN = $(words $(REPOS))
+
+SRC_DIR = $(word 1, $(REPOS))/js
+DIST_DIR = $(word 2, $(REPOS))/js
 
 JAVA = java
 DO_MIN = $(JAVA) -jar $(BUILD_DIR)/google-closure/compiler-20100616.jar --warning_level QUIET
-
-PREFIX = .
-DIST_DIR = $(PREFIX)/dist
 
 BASE_FILES = $(SRC_DIR)/Dragger.js \
 	$(SRC_DIR)/Lesson.js \
@@ -25,19 +32,30 @@ DIST_MIN_FILE = $(DIST_DIR)/src.min.js
 
 all: $(DIST_MIN_FILE)
 
-init:
-	@echo -n "Updating source files..."
-	@if [ "$$(git merge rc/master)" == "Already up-to-date." ]; then \
-		echo "up to date"; \
-	else \
-		echo "updated"; \
-	fi
-
+$(SRC_FILES):
+	@echo -n ""; \
+	# copy Makefile variables into shell, and put them into a list \
+	REPOS=( $(REPOS) ); \
+	BRANCHES=( $(BRANCHES) ); \
+	for (( i = 0; i < $${#REPOS[*]}; i++ )); do \
+		repo=$${REPOS[$$i]}; \
+		branch=$${BRANCHES[$$i]}; \
+		test -d $$repo || { \
+			echo "Setting up $$repo with $$branch..."; \
+			git clone -s -b $$branch . $$repo > /dev/null \
+				|| exit $$?; \
+		} && { \
+			echo "Updating $$repo/$$branch"; \
+			cd $$repo && \
+			git pull > /dev/null \
+				|| exit $$?; \
+		}; \
+	done
 
 $(DIST_DIR):
 	@mkdir -p $(DIST_DIR)
 
-$(DIST_FILE): init $(DIST_DIR) $(SRC_FILES)
+$(DIST_FILE): $(DIST_DIR) $(SRC_FILES)
 	@echo "Combining source files"
 	@cat $(SRC_FILES) > $(DIST_FILE)
 

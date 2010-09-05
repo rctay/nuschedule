@@ -14,15 +14,15 @@ DIST_DIR = $(word 2, $(REPOS))/js
 JAVA = java
 DO_MIN = $(JAVA) -jar $(BUILD_DIR)/google-closure/compiler-20100616.jar --warning_level QUIET
 
-BASE_FILES = $(SRC_DIR)/Dragger.js \
-	$(SRC_DIR)/Main.js \
+BASE_FILES = $(SRC_DIR)/jquery.xdomainajax.js \
+	$(SRC_DIR)/Util.js \
+	$(SRC_DIR)/Signals.js \
 	$(SRC_DIR)/Object.js \
 	$(SRC_DIR)/Ripper.js \
-	$(SRC_DIR)/Set.js \
-	$(SRC_DIR)/Signals.js \
 	$(SRC_DIR)/TimeTable.js \
-	$(SRC_DIR)/Util.js \
-	$(SRC_DIR)/jquery.xdomainajax.js
+	$(SRC_DIR)/Set.js \
+	$(SRC_DIR)/Main.js \
+	$(SRC_DIR)/Dragger.js \
 
 SRC_FILES = $(BASE_FILES)
 

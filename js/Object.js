@@ -8,7 +8,7 @@ function Module() {
 };
 
 Module.prototype.hasLecture = function() {
-	return (this.lecture.length > 0);
+	return !this.lectures.is_empty();
 };
 
 Module.prototype.hasTutorial = function() {
@@ -37,6 +37,9 @@ function Part(title, type, arrSession) {
 var Lecture_List = (function($) {
 	var ret = function() {
 		this.parts = [];
+	};
+	ret.prototype.is_empty = function() {
+		return this.parts.length < 1;
 	};
 	ret.prototype.add_part = function(title, sessions) {
 		this.parts.push(new Part(title, 'lec', sessions));

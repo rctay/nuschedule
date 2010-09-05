@@ -41,5 +41,11 @@ var Lecture_List = (function($) {
 	ret.prototype.add_part = function(title, sessions) {
 		this.parts.push(new Part(title, 'lec', sessions));
 	};
+	ret.prototype.foreach_part = function(func) {
+		var i = this.parts.length;
+		while (i--) {
+			func(i, this.parts[i]);
+		}
+	};
 	return ret;
 })($);

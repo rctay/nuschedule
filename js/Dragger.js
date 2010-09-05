@@ -98,8 +98,8 @@ var onmouseout = function(e) {
 
 //taking any id, convert it into k_ prefixed id.
 function convertK(elem) {
-	arrElemId = elem.attr('id').split('_');
-	elemId = 'k_'+arrElemId[1]+'_'+arrElemId[2]+'_'+arrElemId[3];
+	var arrElemId = elem.attr('id').split('_');
+	var elemId = 'k_'+arrElemId[1]+'_'+arrElemId[2]+'_'+arrElemId[3];
 	return $('#'+elemId);
 };
 

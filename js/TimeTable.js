@@ -231,7 +231,9 @@ TimeTable.prototype.createNode = function(moduleCode, obj, modulePos, objPos, fi
 			this.signupTab(startingCell, 'n_'+modulePos+'_'+obj.type+'_'+objPos);
 			tabNumber = this.getTab(startingCell, 'n_'+modulePos+'_'+obj.type+'_'+objPos) + 1;
 			tabTop = (tabNumber > 3) ? parseInt(t)+cellHeight : t - 10;
-			tabLeft = (tabNumber > 3) ? parseInt(l) + 19 * (tabNumber - 4) : parseInt(l) + 19 * (tabNumber - 1);
+			tabLeft = parseInt(l) + 19 * (tabNumber -
+				((tabNumber > 3) ? 4 : 1)
+			);
 
 			//tabid: m_0_lab_1
 			tabId = (fixed) ? 'e_' : 'm_';
@@ -299,7 +301,9 @@ TimeTable.prototype.showNode = function(moduleCode, obj, modulePos, objPos) { //
 		tabNumber = this.getTempCell(startingCell);
 
 		tabTop = (tabNumber > 3) ? parseInt(t)+cellHeight : t - 10;
-		tabLeft = (tabNumber > 3) ? parseInt(l) + 19 * (tabNumber - 4) : parseInt(l) + 19 * (tabNumber - 1);
+		tabLeft = parseInt(l) + 19 * (tabNumber -
+			((tabNumber > 3) ? 4 : 1)
+		);
 
 		//tabid: t_moduleid_type_objid_sessionid
 		//tabid: t_0_lab_1_1

@@ -36,9 +36,11 @@ init:
 	# copy Makefile variables into shell, and put them into a list \
 	REPOS=( $(REPOS) ); \
 	BRANCHES=( $(BRANCHES) ); \
+	CURR_DIR=$$(pwd); \
 	for (( i = 0; i < $${#REPOS[*]}; i++ )); do \
 		repo=$${REPOS[$$i]}; \
 		branch=$${BRANCHES[$$i]}; \
+		cd $$CURR_DIR; \
 		test -d $$repo || { \
 			echo "Setting up $$repo with $$branch..."; \
 			git clone -s -b $$branch . $$repo > /dev/null \

@@ -1,0 +1,35 @@
+SRC_DIR = js
+BUILD_DIR = build
+
+JAVA = java
+DO_MIN = $(JAVA) -jar $(BUILD_DIR)/google-closure/compiler-20100616.jar --warning_level QUIET
+
+PREFIX = .
+DIST_DIR = $(PREFIX)/dist
+
+BASE_FILES = $(SRC_DIR)/Dragger.js \
+	$(SRC_DIR)/Lesson.js \
+	$(SRC_DIR)/Main.js \
+	$(SRC_DIR)/Object.js \
+	$(SRC_DIR)/Ripper.js \
+	$(SRC_DIR)/Set.js \
+	$(SRC_DIR)/Signals.js \
+	$(SRC_DIR)/TimeTable.js \
+	$(SRC_DIR)/Util.js \
+	$(SRC_DIR)/jquery.xdomainajax.js
+
+SRC_FILES = $(BASE_FILES)
+
+DIST_FILE = $(DIST_DIR)/src.js
+DIST_MIN_FILE = $(DIST_DIR)/src.min.js
+
+all: $(DIST_MIN_FILE)
+
+$(DIST_FILE): $(SRC_FILES)
+	@echo "Combining source files"
+	@mkdir -p $(DIST_DIR)
+	@cat $(SRC_FILES) > $(DIST_FILE)
+
+$(DIST_MIN_FILE): $(DIST_FILE)
+	@echo "Building $(DIST_MIN_FILE)"
+	$(DO_MIN) --js $(DIST_FILE) > $(DIST_MIN_FILE)

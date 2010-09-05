@@ -23,9 +23,9 @@ function TimeTable() {
 
 TimeTable.prototype.resetTable = function() {
 	this.cell = new Array(6);
-	for (i=0;i<6;i++) {
+	for (var i = 0; i < 6; i++) {
 		this.cell[i] = new Array(14);
-		for (j=0;j<14;j++) {
+		for (var j = 0; j < 14; j++) {
 			this.cell[i][j] = [0,0,0,0,0,0,0,0,0,0,0,0]; //12 tabs maximum...although.. hmm
 		}
 	}
@@ -37,14 +37,14 @@ TimeTable.prototype.createTable = function() {
 	//cell manipulation
 	var elemTable = $('<div></div>').attr('id', 'tableMaster');
 
-	for (i=0;i<6;i++) {
-		for (j=0;j<14;j++) {
+	for (var i = 0; i < 6; i++) {
+		for (var j = 0; j < 14; j++) {
 			$("<div></div>")
 				.addClass('cell')
-				.attr('id', 'w' + (i+1) + 't' + (j*100+800))
-				.css({'width': (cellWidth-2), 'height': (cellHeight-2),
-				'top': (i*cellHeight+(i+1)*24), 'left': (j*cellWidth+j)})
-				.text(j*100+800)
+				.attr('id', 'w' + (i + 1) + 't' + (j * 100 + 800))
+				.css({'width': (cellWidth - 2), 'height': (cellHeight - 2),
+				'top': (i * cellHeight + (i + 1) * 24), 'left': (j * cellWidth + j)})
+				.text(j * 100 + 800)
 				.appendTo(elemTable);
 		}
 	}
@@ -60,7 +60,7 @@ TimeTable.prototype.createAllNode = function(fixedArray, onTableArray) {
 	//since this 'createAllNode' is use by both when node has been created and not created
 	//so it's necessary to check the nodeMaster has been set or not
 
-	elemNodeMaster = document.getElementById('nodeMaster');
+	var elemNodeMaster = document.getElementById('nodeMaster');
 
 	if (! elemNodeMaster) { //if not set, create those elements
 		$("#master")
@@ -74,13 +74,13 @@ TimeTable.prototype.createAllNode = function(fixedArray, onTableArray) {
 		this.createModuleViewer(fixedArray, onTableArray);
 		this.resetTable();
 
-		for (r=0; r<onTableArray.length;r++) {
-			str = onTableArray[r];
-			arr = str.split('_');
-			modPos = parseInt(arr[0]);
-			objPos = parseInt(arr[2]);
-			type = arr[1];
-			fixed = (fixedArray.indexOf(str) >= 0);
+		for (var r=0; r < onTableArray.length; r++) {
+			var str = onTableArray[r];
+			var arr = str.split('_');
+			var modPos = parseInt(arr[0]);
+			var objPos = parseInt(arr[2]);
+			var type = arr[1];
+			var fixed = (fixedArray.indexOf(str) >= 0);
 			this.createNode(this.module[modPos].code,
 				this.module[modPos][this.longform[type]][objPos], modPos, objPos, fixed);
 		}
@@ -93,19 +93,20 @@ TimeTable.prototype.createAllNode = function(fixedArray, onTableArray) {
 		this.createModuleViewer();
 
 		//creating all nodes
-		for (m=0;m<this.module.length;m++) {
-			moduleCode = this.module[m].code;
+		for (var m = 0; m < this.module.length; m++) {
+			var module = this.module[m];
+			var moduleCode = module.code;
 
-			if (this.module[m].lecture.length > 0) {
-				this.createNode(moduleCode, this.module[m].lecture[0], m, 0);
+			if (module.lecture.length > 0) {
+				this.createNode(moduleCode, module.lecture[0], m, 0);
 			}
 
-			if (this.module[m].tutorial.length > 0) {
-				this.createNode(moduleCode, this.module[m].tutorial[0], m, 0);
+			if (module.tutorial.length > 0) {
+				this.createNode(moduleCode, module.tutorial[0], m, 0);
 			}
 
-			if (this.module[m].laboratory.length > 0) {
-				this.createNode(moduleCode, this.module[m].laboratory[0], m, 0);
+			if (module.laboratory.length > 0) {
+				this.createNode(moduleCode, module.laboratory[0], m, 0);
 			}
 		}
 	}
@@ -122,7 +123,7 @@ TimeTable.prototype.createModuleViewer = function (fixedArray, onTableArray) {
 		/** background colours, these are constants to be put somewhere **/
 		var background = {'lecture': '#eee', 'tutorial': '#eec', 'laboratory': '#cee'};
 		innerHTML += '<div style="position:relative">';
-		for (n=0;n<this.module[m][type].length;n++) {
+		for (var n = 0; n < this.module[m][type].length; n++) {
 			if (this.module[m][type][n].session.length == 0) continue; //skip this object if no session found
 			t += Math.floor(n / 6) * 17;
 			l = n%6 * 21;
@@ -143,19 +144,19 @@ TimeTable.prototype.createModuleViewer = function (fixedArray, onTableArray) {
 	elemModuleViewer.innerHTML = ''; //clear this out
 
 	p = document.createElement('p');
-	p.setAttribute('style','position:absolute;top:390px;left:25px;color:#f30;font-size:12px;');
+	p.setAttribute('style', 'position:absolute;top:390px;left:25px;color:#f30;font-size:12px;');
 	p.innerHTML = 'Take note of the exam date! It may be wrong due to outdated CORS Module Listing. Use this application only after CORS has updated it';
 	elemModuleViewer.appendChild(p);
 
 	hasArray = (typeof onTableArray != 'undefined');
 
 	/** loop through each module **/
-	for (m=0;m<this.module.length;m++) {
-		var top = Math.floor(m/6)*115+420;
-		var left = (m%6)*130+25;
+	for (var m = 0; m < this.module.length; m++) {
+		var top = Math.floor(m / 6) * 115 + 420;
+		var left = (m % 6) * 130 + 25;
 		elemModule = document.createElement('div');
 		elemModule.className = 'module';
-		elemModule.setAttribute('style','top:'+top+'px;left:'+left+'px;');
+		elemModule.setAttribute('style', 'top:'+top+'px;left:'+left+'px;');
 
 		innerHTML = '<div class="colorChooser" style="background-color:'+backgroundColor[m]+';"></div>';
 		innerHTML += '<h5>'+this.module[m].code+'&nbsp;<small>'+this.module[m].exam+'</small></h5>';
@@ -196,7 +197,7 @@ TimeTable.prototype.createNode = function(moduleCode, obj, modulePos, objPos, fi
 	elemNodeMaster = document.getElementById('nodeMaster');
 	elemSubNode = document.createElement('div');
 
-	for (i=0;i<obj.session.length;i++) {
+	for (var i = 0; i < obj.session.length; i++) {
 
 		sessionLength = obj.session[i].cell.length;
 		startingCell = obj.session[i].cell[0];
@@ -206,10 +207,10 @@ TimeTable.prototype.createNode = function(moduleCode, obj, modulePos, objPos, fi
 
 		//getting left and top of the node, by refering to the starting cell id
 		elem = document.getElementById(startingCell);
-		t = parseInt(elem.style.top)+1;
-		l = parseInt(elem.style.left)+1;
-		w = cellWidth*sessionLength - (10-sessionLength);
-		h = cellHeight-6;
+		t = parseInt(elem.style.top) + 1;
+		l = parseInt(elem.style.left) + 1;
+		w = cellWidth * sessionLength - (10 - sessionLength);
+		h = cellHeight - 6;
 
 		//node id, is the id of all occupied id, and the some other info.
 		//example: n_0_lab_2_w1t800 (starting cell only, to differentiate with another session)
@@ -222,7 +223,7 @@ TimeTable.prototype.createNode = function(moduleCode, obj, modulePos, objPos, fi
 
 		elemNode = document.createElement('div');
 		elemNode.className = (fixed) ? 'fixedNode' : 'node';
-		elemNode.setAttribute('id',nodeId);
+		elemNode.setAttribute('id', nodeId);
 		elemNode.setAttribute('style', 'left:'+l+'px;top:'+t+'px;width:'+w+'px;height:'+h+'px;background-color:'+backgroundColor[modulePos]+';color:'+fontColor[modulePos]);
 		elemNode.innerHTML = innerHTML;
 
@@ -230,15 +231,17 @@ TimeTable.prototype.createNode = function(moduleCode, obj, modulePos, objPos, fi
 		if (! fixed) {
 			this.signupTab(startingCell, 'n_'+modulePos+'_'+obj.type+'_'+objPos);
 			tabNumber = this.getTab(startingCell, 'n_'+modulePos+'_'+obj.type+'_'+objPos) + 1;
-			tabTop = (tabNumber > 3) ? parseInt(t)+cellHeight : t-10;
-			tabLeft = (tabNumber > 3) ? parseInt(l)+19*(tabNumber-4) : parseInt(l)+19*(tabNumber-1);
+			tabTop = (tabNumber > 3) ? parseInt(t)+cellHeight : t - 10;
+			tabLeft = parseInt(l) + 19 * (tabNumber -
+				((tabNumber > 3) ? 4 : 1)
+			);
 
 			//tabid: m_0_lab_1
 			tabId = (fixed) ? 'e_' : 'm_';
 			tabId += modulePos+'_'+obj.type+'_'+objPos+'_'+i;
 			elemTab = document.createElement('div');
 			elemTab.className = (fixed) ? 'fixedNodeTab' : 'tab';
-			elemTab.setAttribute('id',tabId);
+			elemTab.setAttribute('id', tabId);
 			elemTab.setAttribute('style', 'left:'+tabLeft+'px;top:'+tabTop+'px;width:17px;height:10px;background-color:'+backgroundColor[modulePos]);
 			elemSubNode.appendChild(elemTab);
 		}
@@ -261,7 +264,7 @@ TimeTable.prototype.showNode = function(moduleCode, obj, modulePos, objPos) { //
 	//if the obj is fixed, why show? just skip all.
 	if (this.fixedArray.indexOf(modulePos+'_'+obj.type+'_'+objPos) >= 0) return;
 
-	for (i=0;i<obj.session.length;i++) {
+	for (var i = 0; i < obj.session.length; i++) {
 
 		sessionLength = obj.session[i].cell.length;
 		startingCell = obj.session[i].cell[0];
@@ -269,7 +272,7 @@ TimeTable.prototype.showNode = function(moduleCode, obj, modulePos, objPos) { //
 		//since the nodes are created randomly, so some of the cells might be overlapped by previous time
 		//like, 800-1000 class might overlap a class from 900-1000.
 		//so, rip out the cell position, and give them zIndex.
-		startingTime = parseInt(startingCell.substring(3,startingCell.length));
+		startingTime = parseInt(startingCell.substring(3, startingCell.length));
 		zIndex = Math.floor(startingTime/100); //floor it, to prevent some malfunction startingtime occur.
 
 		/\[(.+)\]/.test(obj.title);
@@ -278,17 +281,17 @@ TimeTable.prototype.showNode = function(moduleCode, obj, modulePos, objPos) { //
 
 		//getting left and top of the node, by refering to the starting cell id
 		elem = document.getElementById(startingCell);
-		t = parseInt(elem.style.top)+1;
-		l = parseInt(elem.style.left)+1;
-		w = cellWidth*sessionLength - (7-sessionLength);
-		h = cellHeight-6;
+		t = parseInt(elem.style.top) + 1;
+		l = parseInt(elem.style.left) + 1;
+		w = cellWidth * sessionLength - (7 - sessionLength);
+		h = cellHeight - 6;
 
 		//tabid: b_moduleid_type_objid_cellid
 		//tabid: b_0_lab_1_1
 		nodeId = 'b_'+modulePos+'_'+obj.type+'_'+objPos+'_'+i;
 		elemNode = document.createElement('div');
 		elemNode.className = 'tempNode';
-		elemNode.setAttribute('id',nodeId);
+		elemNode.setAttribute('id', nodeId);
 		elemNode.setAttribute('style', 'left:'+l+'px;top:'+t+'px;width:'+w+'px;height:'+h+'px;z-index:'+zIndex);
 		elemNode.innerHTML = innerHTML;
 
@@ -298,8 +301,10 @@ TimeTable.prototype.showNode = function(moduleCode, obj, modulePos, objPos) { //
 		this.signupTempCell(startingCell);
 		tabNumber = this.getTempCell(startingCell);
 
-		tabTop = (tabNumber > 3) ? parseInt(t)+cellHeight : t-10;
-		tabLeft = (tabNumber > 3) ? parseInt(l)+19*(tabNumber-4) : parseInt(l)+19*(tabNumber-1);
+		tabTop = (tabNumber > 3) ? parseInt(t)+cellHeight : t - 10;
+		tabLeft = parseInt(l) + 19 * (tabNumber -
+			((tabNumber > 3) ? 4 : 1)
+		);
 
 		//tabid: t_moduleid_type_objid_sessionid
 		//tabid: t_0_lab_1_1
@@ -307,7 +312,7 @@ TimeTable.prototype.showNode = function(moduleCode, obj, modulePos, objPos) { //
 		elemTab = document.createElement('div');
 		elemTab.className = 'tempTab';
 		elemTab.innerHTML = classNumber;
-		elemTab.setAttribute('id',tabId);
+		elemTab.setAttribute('id', tabId);
 		elemTab.setAttribute('style', 'left:'+tabLeft+'px;top:'+tabTop+'px;width:17px;height:10px;');
 
 		elemSubNode.appendChild(elemNode);
@@ -340,13 +345,13 @@ TimeTable.prototype.swapNode = function(targetNode, oldNode, fixed) {
 TimeTable.prototype.shortenTitle = function(title) {
 	if (/LECTURE Class \[(.+)\]/.test(title)) {
 		title = 'LEC ['+RegExp.$1+']';
-	}else if (/SECTIONAL TEACHING Class \[(.+)\]/.test(title)) {
+	} else if (/SECTIONAL TEACHING Class \[(.+)\]/.test(title)) {
 		title = 'LEC ['+RegExp.$1+']';
-	}else if (/DESIGN TUTORIAL Class \[(.+)\]/.test(title)) {
+	} else if (/DESIGN TUTORIAL Class \[(.+)\]/.test(title)) {
 		title = 'D. TUT ['+RegExp.$1+']';
-	}else if (/TUTORIAL Class \[(.+)\]/.test(title)) {
+	} else if (/TUTORIAL Class \[(.+)\]/.test(title)) {
 		title = 'TUT ['+RegExp.$1+']';
-	}else if (/LABORATORY Class \[(.+)\]/.test(title)) {
+	} else if (/LABORATORY Class \[(.+)\]/.test(title)) {
 		title = 'LAB ['+RegExp.$1+']';
 	}
 	return title;
@@ -355,16 +360,16 @@ TimeTable.prototype.shortenTitle = function(title) {
 TimeTable.prototype.unmark = function (obj, nodeId) { //take in a Part object
 
 	//convert nodeId (s_0_lec_0) to n_0_lec_0
-	nodeId = 'n'+nodeId.substring(1,nodeId.length);
+	nodeId = 'n'+nodeId.substring(1, nodeId.length);
 
-	for (u=0;u<obj.session.length;u++) { //loop through
+	for (var u = 0; u < obj.session.length; u++) { //loop through
 		firstCell = obj.session[u].cell[0]; //Like: w1t800
 
 		//rip out the col and row
-		theWeek = parseInt(firstCell.substring(1,2));
-		theTime = parseInt(firstCell.substring(3,firstCell.length));
-		col = Math.floor(theTime/100)-8;
-		row = theWeek-1;
+		theWeek = parseInt(firstCell.substring(1, 2));
+		theTime = parseInt(firstCell.substring(3, firstCell.length));
+		col = Math.floor(theTime / 100) - 8;
+		row = theWeek - 1;
 
 		//removing the nodeId (n_0_lec_0) from the array cell by marking 0 on it.
 		indexOfId = this.cell[row][col].indexOf(nodeId);
@@ -382,12 +387,12 @@ TimeTable.prototype.removeNode = function(node) {
 	if (node) {
 
 		//check whether it is a fixed node. If yes, remove from the fixedArray
-		pos = this.fixedArray.indexOf(node.id.substring(2,node.id.length));
-		if (pos >= 0) this.fixedArray.splice(pos,1);
+		pos = this.fixedArray.indexOf(node.id.substring(2, node.id.length));
+		if (pos >= 0) this.fixedArray.splice(pos, 1);
 
 		//remove from onTableArray
-		pos = this.onTableArray.indexOf(node.id.substring(2,node.id.length));
-		if (pos >= 0) this.onTableArray.splice(pos,1);
+		pos = this.onTableArray.indexOf(node.id.substring(2, node.id.length));
+		if (pos >= 0) this.onTableArray.splice(pos, 1);
 
 		document.getElementById('nodeMaster').removeChild(node);
 
@@ -402,26 +407,26 @@ TimeTable.prototype.removeNode = function(node) {
 };
 
 TimeTable.prototype.signupTempCell = function(id) {
-	theWeek = parseInt(id.substring(1,2));
-	theTime = parseInt(id.substring(3,id.length));
-	col = Math.floor(theTime/100)-8;
-	row = theWeek-1;
+	theWeek = parseInt(id.substring(1, 2));
+	theTime = parseInt(id.substring(3, id.length));
+	col = Math.floor(theTime / 100) - 8;
+	row = theWeek - 1;
 	this.tempCell[row][col]++;
 };
 
 TimeTable.prototype.getTempCell = function(id) {
-	theWeek = parseInt(id.substring(1,2));
-	theTime = parseInt(id.substring(3,id.length));
-	col = Math.floor(theTime/100)-8;
-	row = theWeek-1;
+	theWeek = parseInt(id.substring(1, 2));
+	theTime = parseInt(id.substring(3, id.length));
+	col = Math.floor(theTime / 100) - 8;
+	row = theWeek - 1;
 	return this.tempCell[row][col];
 };
 
 TimeTable.prototype.resetTempCell = function() {
 	this.tempCell = new Array(6);
-	for (i=0;i<6;i++) {
+	for (var i = 0; i < 6; i++) {
 		this.tempCell[i] = new Array(14);
-		for (j=0;j<14;j++) {
+		for (var j = 0; j < 14; j++) {
 			this.tempCell[i][j] = 0;
 		}
 	}
@@ -429,19 +434,19 @@ TimeTable.prototype.resetTempCell = function() {
 
 //assign id (n_0_lec_0) into a free tab (0) by using id (w1t800) refering.
 TimeTable.prototype.signupTab = function(id, nodeId) {
-	theWeek = parseInt(id.substring(1,2));
-	theTime = parseInt(id.substring(3,id.length));
-	col = Math.floor(theTime/100)-8;
-	row = theWeek-1;
+	theWeek = parseInt(id.substring(1, 2));
+	theTime = parseInt(id.substring(3, id.length));
+	col = Math.floor(theTime / 100) - 8;
+	row = theWeek - 1;
 	indexOfZero = this.cell[row][col].indexOf(0);
 	this.cell[row][col][indexOfZero] = nodeId;
 };
 
 //return the tab location of nodeId by refering to id (w1t800);
 TimeTable.prototype.getTab = function(id, nodeId) {
-	theWeek = parseInt(id.substring(1,2));
-	theTime = parseInt(id.substring(3,id.length));
-	col = Math.floor(theTime/100)-8;
-	row = theWeek-1;
+	theWeek = parseInt(id.substring(1, 2));
+	theTime = parseInt(id.substring(3, id.length));
+	col = Math.floor(theTime / 100) - 8;
+	row = theWeek - 1;
 	return this.cell[row][col].indexOf(nodeId);
 };

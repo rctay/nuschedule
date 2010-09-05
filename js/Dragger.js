@@ -7,9 +7,9 @@ var iDiffY = 0;
 
 var onmousedown = function(e) {
 	e = (jQuery.browser.msie) ? window.event : e;
-	targetElem = (jQuery.browser.msie) ? e.srcElement : e.target;
+	var targetElem = (jQuery.browser.msie) ? e.srcElement : e.target;
 	if (targetElem.tagName == 'B') targetElem = targetElem.parentNode; //fix <B> problem in safari
-	jObj = $('#'+targetElem.id); //work like $(this)
+	var jObj = $('#'+targetElem.id); //work like $(this)
 
 
 	//pressing nodes/tabs
@@ -49,9 +49,9 @@ var onmousedown = function(e) {
 };
 
 var onmouseup = function(e) {
-	targetElem = (jQuery.browser.msie) ? e.srcElement : e.target;
+	var targetElem = (jQuery.browser.msie) ? e.srcElement : e.target;
 	if (targetElem.tagName == 'B') targetElem = targetElem.parentNode; //fix <B> problem in safari
-	jObj = $('#'+targetElem.id); //work like $(this)
+	var jObj = $('#'+targetElem.id); //work like $(this)
 
 	if (dragging) {
 		removeAvailableCell();
@@ -77,9 +77,9 @@ var onmousemove = function(e) {
 };
 
 var onmouseover = function(e) {
-	targetElem = (jQuery.browser.msie) ? e.srcElement : e.target;
+	var targetElem = (jQuery.browser.msie) ? e.srcElement : e.target;
 	if (targetElem.tagName == 'B') targetElem = targetElem.parentNode; //fix <B> problem in safari
-	jObj = $('#'+targetElem.id); //work like $(this)
+	var jObj = $('#'+targetElem.id); //work like $(this)
 
 	if (/(^b_|^t_)/.test(targetElem.id)) {
 		jObj.siblings().andSelf().css('backgroundColor', '#a55').css('zIndex',30);
@@ -87,9 +87,9 @@ var onmouseover = function(e) {
 }
 
 var onmouseout = function(e) {
-	targetElem = (jQuery.browser.msie) ? e.srcElement : e.target;
+	var targetElem = (jQuery.browser.msie) ? e.srcElement : e.target;
 	if (targetElem.tagName == 'B') targetElem = targetElem.parentNode; //fix <B> problem in safari
-	jObj = $('#'+targetElem.id); //work like $(this)
+	var jObj = $('#'+targetElem.id); //work like $(this)
 
 	if (/(^b_|^t_)/.test(targetElem.id)) {
 		jObj.siblings().andSelf().css('backgroundColor', '#555').css('zIndex',1);

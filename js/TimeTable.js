@@ -60,7 +60,7 @@ TimeTable.prototype.createAllNode = function(fixedArray, onTableArray) {
 	//since this 'createAllNode' is use by both when node has been created and not created
 	//so it's necessary to check the nodeMaster has been set or not
 
-	elemNodeMaster = document.getElementById('nodeMaster');
+	var elemNodeMaster = document.getElementById('nodeMaster');
 
 	if (! elemNodeMaster) { //if not set, create those elements
 		$("#master")
@@ -75,12 +75,12 @@ TimeTable.prototype.createAllNode = function(fixedArray, onTableArray) {
 		this.resetTable();
 
 		for (var r=0; r < onTableArray.length; r++) {
-			str = onTableArray[r];
-			arr = str.split('_');
-			modPos = parseInt(arr[0]);
-			objPos = parseInt(arr[2]);
-			type = arr[1];
-			fixed = (fixedArray.indexOf(str) >= 0);
+			var str = onTableArray[r];
+			var arr = str.split('_');
+			var modPos = parseInt(arr[0]);
+			var objPos = parseInt(arr[2]);
+			var type = arr[1];
+			var fixed = (fixedArray.indexOf(str) >= 0);
 			this.createNode(this.module[modPos].code,
 				this.module[modPos][this.longform[type]][objPos], modPos, objPos, fixed);
 		}
@@ -94,7 +94,7 @@ TimeTable.prototype.createAllNode = function(fixedArray, onTableArray) {
 
 		//creating all nodes
 		for (var m = 0; m < this.module.length; m++) {
-			moduleCode = this.module[m].code;
+			var moduleCode = this.module[m].code;
 
 			if (this.module[m].lecture.length > 0) {
 				this.createNode(moduleCode, this.module[m].lecture[0], m, 0);

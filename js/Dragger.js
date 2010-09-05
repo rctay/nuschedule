@@ -9,6 +9,7 @@ var onmousedown = function(e) {
 	e = (jQuery.browser.msie) ? window.event : e;
 	var targetElem = (jQuery.browser.msie) ? e.srcElement : e.target;
 	if (targetElem.tagName == 'B') targetElem = targetElem.parentNode; //fix <B> problem in safari
+	if (!targetElem.id) return;
 	var jObj = $('#'+targetElem.id); //work like $(this)
 
 
@@ -51,6 +52,7 @@ var onmousedown = function(e) {
 var onmouseup = function(e) {
 	var targetElem = (jQuery.browser.msie) ? e.srcElement : e.target;
 	if (targetElem.tagName == 'B') targetElem = targetElem.parentNode; //fix <B> problem in safari
+	if (!targetElem.id) return;
 	var jObj = $('#'+targetElem.id); //work like $(this)
 
 	if (dragging) {
@@ -79,20 +81,20 @@ var onmousemove = function(e) {
 var onmouseover = function(e) {
 	var targetElem = (jQuery.browser.msie) ? e.srcElement : e.target;
 	if (targetElem.tagName == 'B') targetElem = targetElem.parentNode; //fix <B> problem in safari
-	var jObj = $('#'+targetElem.id); //work like $(this)
 
 	if (/(^b_|^t_)/.test(targetElem.id)) {
-		jObj.siblings().andSelf().css('backgroundColor', '#a55').css('zIndex',30);
+		$('#'+targetElem.id) //work like $(this)
+		.siblings().andSelf().css('backgroundColor', '#a55').css('zIndex',30);
 	}
 }
 
 var onmouseout = function(e) {
 	var targetElem = (jQuery.browser.msie) ? e.srcElement : e.target;
 	if (targetElem.tagName == 'B') targetElem = targetElem.parentNode; //fix <B> problem in safari
-	var jObj = $('#'+targetElem.id); //work like $(this)
 
 	if (/(^b_|^t_)/.test(targetElem.id)) {
-		jObj.siblings().andSelf().css('backgroundColor', '#555').css('zIndex',1);
+		$('#'+targetElem.id) //work like $(this)
+		.siblings().andSelf().css('backgroundColor', '#555').css('zIndex',1);
 	}
 }
 

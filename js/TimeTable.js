@@ -94,18 +94,19 @@ TimeTable.prototype.createAllNode = function(fixedArray, onTableArray) {
 
 		//creating all nodes
 		for (var m = 0; m < this.module.length; m++) {
-			var moduleCode = this.module[m].code;
+			var module = this.module[m];
+			var moduleCode = module.code;
 
-			if (this.module[m].lecture.length > 0) {
-				this.createNode(moduleCode, this.module[m].lecture[0], m, 0);
+			if (module.lecture.length > 0) {
+				this.createNode(moduleCode, module.lecture[0], m, 0);
 			}
 
-			if (this.module[m].tutorial.length > 0) {
-				this.createNode(moduleCode, this.module[m].tutorial[0], m, 0);
+			if (module.tutorial.length > 0) {
+				this.createNode(moduleCode, module.tutorial[0], m, 0);
 			}
 
-			if (this.module[m].laboratory.length > 0) {
-				this.createNode(moduleCode, this.module[m].laboratory[0], m, 0);
+			if (module.laboratory.length > 0) {
+				this.createNode(moduleCode, module.laboratory[0], m, 0);
 			}
 		}
 	}

@@ -65,3 +65,16 @@ $(DIST_FILE): $(DIST_DIR) $(SRC_FILES)
 $(DIST_MIN_FILE): $(DIST_FILE)
 	@echo "Building $(DIST_MIN_FILE)"
 	$(DO_MIN) --js $(DIST_FILE) > $(DIST_MIN_FILE)
+	@echo -n ""; \
+	CURR_DIR=$$(pwd); \
+	FILE=$(subst $(DIST_DIR)/,,$(DIST_MIN_FILE)); \
+	{ \
+		cd $(DIST_DIR) && { \
+			git ls-files -m | grep -F $$FILE > /dev/null; \
+		} \
+		&& git add $$FILE \
+		&& git commit -m "update minified source" -q \
+		&& git push -q \
+			|| exit $$?; \
+	}; \
+	cd $$CURR_DIR;

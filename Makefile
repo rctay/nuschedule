@@ -26,7 +26,7 @@ BASE_FILES = $(SRC_DIR)/Dragger.js \
 
 SRC_FILES = $(BASE_FILES)
 
-DIST_FILE = $(DIST_DIR)/src.js
+DIST_FILE = $(BUILD_DIR)/src.js
 DIST_MIN_FILE = $(DIST_DIR)/src.min.js
 
 all: $(DIST_MIN_FILE)

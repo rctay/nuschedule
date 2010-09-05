@@ -47,5 +47,9 @@ var Lecture_List = (function($) {
 			func(i, this.parts[i]);
 		}
 	};
+	ret.prototype.forfirst_part = function(func) {
+		if (this.parts.length)
+			func(this.parts[0]);
+	};
 	return ret;
 })($);

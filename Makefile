@@ -25,10 +25,19 @@ DIST_MIN_FILE = $(DIST_DIR)/src.min.js
 
 all: $(DIST_MIN_FILE)
 
+init:
+	@echo -n "Updating source files..."
+	@if [ "$$(git merge rc/master)" == "Already up-to-date." ]; then \
+		echo "up to date"; \
+	else \
+		echo "updated"; \
+	fi
+
+
 $(DIST_DIR):
 	@mkdir -p $(DIST_DIR)
 
-$(DIST_FILE): $(DIST_DIR) $(SRC_FILES)
+$(DIST_FILE): init $(DIST_DIR) $(SRC_FILES)
 	@echo "Combining source files"
 	@cat $(SRC_FILES) > $(DIST_FILE)
 

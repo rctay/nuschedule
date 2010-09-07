@@ -36,21 +36,19 @@ init:
 	# copy Makefile variables into shell, and put them into a list \
 	REPOS=( $(REPOS) ); \
 	BRANCHES=( $(BRANCHES) ); \
-	CURR_DIR=$$(pwd); \
 	for (( i = 0; i < $${#REPOS[*]}; i++ )); do \
 		repo=$${REPOS[$$i]}; \
 		branch=$${BRANCHES[$$i]}; \
-		cd $$CURR_DIR; \
-		test -d $$repo || { \
+		test -d $$repo || ( \
 			echo "Setting up $$repo with $$branch..."; \
 			git clone -s -b $$branch . $$repo > /dev/null \
 				|| exit $$?; \
-		} && { \
+		) && ( \
 			echo "Updating $$repo/$$branch"; \
 			cd $$repo && \
 			git pull > /dev/null \
 				|| exit $$?; \
-		}; \
+		); \
 	done
 
 $(SRC_FILES): init
@@ -66,15 +64,13 @@ $(DIST_MIN_FILE): $(DIST_FILE)
 	@echo "Building $(DIST_MIN_FILE)"
 	$(DO_MIN) --js $(DIST_FILE) > $(DIST_MIN_FILE)
 	@echo -n ""; \
-	CURR_DIR=$$(pwd); \
 	FILE=$(subst $(DIST_DIR)/,,$(DIST_MIN_FILE)); \
-	{ \
-		cd $(DIST_DIR) && { \
+	( \
+		cd $(DIST_DIR) && ( \
 			git ls-files -m | grep -F $$FILE > /dev/null; \
-		} \
+		) \
 		&& git add $$FILE \
 		&& git commit -m "update minified source" -q \
 		&& git push -q \
 			|| exit $$?; \
-	}; \
-	cd $$CURR_DIR;
+	);

@@ -113,6 +113,9 @@ ret.prototype._send_request = function(url) {
 		// default, but be explicit
 		type: "GET",
 		url: this.url,
+		error: function() {
+			NUSchedule.signals.send("on_module_rip_error", _ripper.rip_index);
+		},
 		success: function(data) {
 			if (data.indexOf("<strong>Module Information</strong>") != -1) {
 				// set the sPage

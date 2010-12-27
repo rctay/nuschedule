@@ -85,7 +85,11 @@ ret.prototype.start = function() {
 		}
 	});
 	if (proceed) {
-		$('#ripButton').val('Waiting...').mouseup(function() { return false; });
+		$('#ripButton')
+		.val('Waiting...')
+		.mouseup(function() { return false; })
+		.attr("disabled", true);
+
 		$('#nextButton').hide();
 		_foreach_module_field(function(i, field) {
 			if (field.val() != '') {
@@ -318,7 +322,11 @@ ret.prototype.ripNext = function() {
 	if (++this.rip_index <= MAX_RIP_INDEX) {
 		this.rip();
 	} else {
-		$('#ripButton').val('Re-Scan All').mouseup(this.start);
+		$('#ripButton')
+		.val('Re-Scan All')
+		.mouseup(this.start)
+		.attr("disabled", false);
+
 		if (tt.module.length > 0) {
 			//show NEXT button if module>0
 			$("#nextButton").show();

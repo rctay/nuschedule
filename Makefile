@@ -69,6 +69,6 @@ $(DIST_MIN_FILE): $(DIST_FILE)
 		git ls-files -m | grep -F $$FILE > /dev/null && ( \
 		  git add $$FILE && \
 		  git commit -m "update minified source" -q  && \
-		  git push -q || exit $$?; \
+		  git push -q || echo "auto-commit failed!"; \
 		) || echo "nothing changed"; \
 	);

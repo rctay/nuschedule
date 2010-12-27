@@ -85,7 +85,11 @@ ret.prototype.start = function() {
 		}
 	});
 	if (proceed) {
-		$('#ripButton').val('Waiting...').mouseup(function() { return false; });
+		$('#ripButton')
+		.val('Waiting...')
+		.mouseup(function() { return false; })
+		.attr("disabled", true);
+
 		$('#nextButton').hide();
 		_foreach_module_field(function(i, field) {
 			if (field.val() != '') {
@@ -109,17 +113,25 @@ ret.prototype._send_request = function(url) {
 	this.url = url;
 
 	var _ripper = this;
-	$.get(this.url, function(data) {
-		if (data.indexOf("<strong>Module Information</strong>") != -1) {
-			// set the sPage
-			_ripper.sPage = data;
-			_ripper.$page = $(data);
-			_ripper.getModule();
-			NUSchedule.signals.send("on_module_rip_success", _ripper.rip_index);
-		} else {
+	$.ajax({
+		// default, but be explicit
+		type: "GET",
+		url: this.url,
+		error: function() {
 			NUSchedule.signals.send("on_module_rip_error", _ripper.rip_index);
+		},
+		success: function(data) {
+			if (data.indexOf("<strong>Module Information</strong>") != -1) {
+				// set the sPage
+				_ripper.sPage = data;
+				_ripper.$page = $(data);
+				_ripper.getModule();
+				NUSchedule.signals.send("on_module_rip_success", _ripper.rip_index);
+			} else {
+				NUSchedule.signals.send("on_module_rip_error", _ripper.rip_index);
+			}
+			_ripper.ripNext();
 		}
-		_ripper.ripNext();
 	});
 };
 
@@ -310,7 +322,11 @@ ret.prototype.ripNext = function() {
 	if (++this.rip_index <= MAX_RIP_INDEX) {
 		this.rip();
 	} else {
-		$('#ripButton').val('Re-Scan All').mouseup(this.start);
+		$('#ripButton')
+		.val('Re-Scan All')
+		.mouseup(this.start)
+		.attr("disabled", false);
+
 		if (tt.module.length > 0) {
 			//show NEXT button if module>0
 			$("#nextButton").show();

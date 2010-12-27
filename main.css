@@ -68,6 +68,7 @@ div#comment_feedback{display:none;background:#fff;width:250px;padding:5px;border
 .button{border:1px solid #ccc !important;padding:5px 10px;font-family:verdana,sans-serif;font-size:12px;color:#777;}
 .button{background:#eee;font-weight:normal;}
 .button:hover{border:1px solid #666 !important;color:#222;cursor:pointer;}
+.button:disabled { cursor: progress; }
 
 div#page{z-index:2;}
 /* page 1 */

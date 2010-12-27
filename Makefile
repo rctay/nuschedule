@@ -65,13 +65,11 @@ $(DIST_MIN_FILE): $(DIST_FILE)
 	@echo -n ""; \
 	FILE=$(subst $(DIST_DIR)/,,$(DIST_MIN_FILE)); \
 	( \
-		cd $(DIST_DIR); \
-		if [ $$(git ls-files -m | grep -F $$FILE > /dev/null) ]; then \
+		cd $(DIST_DIR) && \
+		git ls-files -m | grep -F $$FILE > /dev/null && ( \
 		  git add $$FILE \
 		  && git commit -m "update minified source" -q \
 		  && git push -q \
 			  || exit $$?; \
-		else \
-			echo "nothing changed"; \
-		fi; \
+		) || echo "nothing changed"; \
 	);

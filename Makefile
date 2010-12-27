@@ -67,9 +67,8 @@ $(DIST_MIN_FILE): $(DIST_FILE)
 	( \
 		cd $(DIST_DIR) && \
 		git ls-files -m | grep -F $$FILE > /dev/null && ( \
-		  git add $$FILE \
-		  && git commit -m "update minified source" -q \
-		  && git push -q \
-			  || exit $$?; \
+		  git add $$FILE && \
+		  git commit -m "update minified source" -q  && \
+		  git push -q || exit $$?; \
 		) || echo "nothing changed"; \
 	);

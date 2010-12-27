@@ -143,7 +143,7 @@ TimeTable.prototype.createModuleViewer = function (fixedArray, onTableArray) {
 	elemModuleViewer.innerHTML = ''; //clear this out
 
 	p = document.createElement('p');
-	p.setAttribute('style','position:absolute;top:390px;left:25px;color:#f30;font-size:12px;');
+	p.setAttribute('style','color:#f30;font-size:12px;');
 	p.innerHTML = 'Take note of the exam date! It may be wrong due to outdated CORS Module Listing. Use this application only after CORS has updated it';
 	elemModuleViewer.appendChild(p);
 
@@ -151,8 +151,8 @@ TimeTable.prototype.createModuleViewer = function (fixedArray, onTableArray) {
 
 	/** loop through each module **/
 	for (m=0;m<this.module.length;m++) {
-		var top = Math.floor(m/6)*115+420;
-		var left = (m%6)*130+25;
+		var top = Math.floor(m/6)*115;
+		var left = (m%6)*130;
 		elemModule = document.createElement('div');
 		elemModule.className = 'module';
 		elemModule.setAttribute('style','top:'+top+'px;left:'+left+'px;');

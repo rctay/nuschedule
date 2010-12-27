@@ -109,17 +109,22 @@ ret.prototype._send_request = function(url) {
 	this.url = url;
 
 	var _ripper = this;
-	$.get(this.url, function(data) {
-		if (data.indexOf("<strong>Module Information</strong>") != -1) {
-			// set the sPage
-			_ripper.sPage = data;
-			_ripper.$page = $(data);
-			_ripper.getModule();
-			NUSchedule.signals.send("on_module_rip_success", _ripper.rip_index);
-		} else {
-			NUSchedule.signals.send("on_module_rip_error", _ripper.rip_index);
+	$.ajax({
+		// default, but be explicit
+		type: "GET",
+		url: this.url,
+		success: function(data) {
+			if (data.indexOf("<strong>Module Information</strong>") != -1) {
+				// set the sPage
+				_ripper.sPage = data;
+				_ripper.$page = $(data);
+				_ripper.getModule();
+				NUSchedule.signals.send("on_module_rip_success", _ripper.rip_index);
+			} else {
+				NUSchedule.signals.send("on_module_rip_error", _ripper.rip_index);
+			}
+			_ripper.ripNext();
 		}
-		_ripper.ripNext();
 	});
 };
 

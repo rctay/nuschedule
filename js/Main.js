@@ -134,17 +134,15 @@ function sendComment(){
 };
 
 function showPage2() {
-	opacity('page1',100,0,500);
-	setTimeout("removeElem('page1')", 600);
-	setTimeout("revealElem('page2')", 700);
+	$("#page1").slideToggle("slow");
+	$("#page2").slideToggle("slow");
 	page2_addBoxes();
 };
 
 function showPage3() {
-	opacity('page2',100,0,500);
-	setTimeout("removeElem('page2')", 600);
-	setTimeout("revealElem('page3')", 600);
-	setTimeout("revealElem('master')",600);
+	$("#page2").slideToggle("slow");
+	$("#page3").slideToggle("slow");
+	$("#master").slideToggle("slow");
 };
 
 function page2_addBoxes() {

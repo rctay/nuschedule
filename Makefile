@@ -1,15 +1,11 @@
 BUILD_DIR = build
 
-# list of repos-branches - each repo corresponds to a branch
-REPOS = $(BUILD_DIR)/src \
-	$(BUILD_DIR)/pages
-BRANCHES = rc/master \
-	gh-pages
-# for faking named arrays
-LEN = $(words $(REPOS))
+REPO_DIR = $(BUILD_DIR)/pages
+SRC_BRANCH = rc/master
+DIST_BRANCH = gh/pages
 
-SRC_DIR = $(word 1, $(REPOS))/js
-DIST_DIR = $(word 2, $(REPOS))/js
+SRC_DIR = $(REPO_DIR)/js
+DIST_DIR = $(REPO_DIR)/js
 
 JAVA = java
 DO_MIN = $(JAVA) -jar $(BUILD_DIR)/google-closure/compiler-20100616.jar --warning_level QUIET
@@ -28,27 +24,33 @@ SRC_FILES = $(BASE_FILES)
 
 DIST_FILE = $(BUILD_DIR)/src.js
 DIST_MIN_FILE = $(DIST_DIR)/src.min.js
+TEMP_DIST_MIN_FILE = $(BUILD_DIR)/src.min.js
 
 all: $(DIST_MIN_FILE)
 
 init:
 	@echo -n ""; \
-	# copy Makefile variables into shell, and put them into a list \
-	REPOS=( $(REPOS) ); \
-	BRANCHES=( $(BRANCHES) ); \
-	for (( i = 0; i < $${#REPOS[*]}; i++ )); do \
-		repo=$${REPOS[$$i]}; \
-		branch=$${BRANCHES[$$i]}; \
-		test -d $$repo && ( \
-			echo "Updating $$repo/$$branch"; ( \
-				cd $$repo && \
-				git pull > /dev/null \
-			) \
-		) || ( \
-			echo "Setting up $$repo with $$branch..."; \
-			git clone -s -b $$branch . $$repo > /dev/null; \
-		); \
-	done
+	if [ -d $(REPO_DIR) ]; then \
+		echo "Updating $(REPO_DIR)/$(SRC_BRANCH)"; ( \
+			cd $(REPO_DIR) && \
+			git fetch origin \
+				|| exit $$?; \
+			if [ "$$(git symbolic-ref HEAD)" == "refs/heads/master" ]; then \
+				test "$$(git rev-parse --verify origin/rc/master)" == "$$(git rev-parse --verify HEAD)" && \
+				test -z "$$(git status --porcelain)" \
+					&& exit 0; \
+				git reset --hard origin/rc/master; \
+			else \
+				git reset --hard && \
+				git checkout -B master origin/rc/master; \
+			fi; \
+		) \
+	else \
+		echo "Setting up $(REPO_DIR) with $(SRC_BRANCH)..."; \
+		git clone -s -b $(SRC_BRANCH) . $(REPO_DIR) > /dev/null && \
+		git branch -m master \
+			|| exit $$?; \
+	fi
 
 $(SRC_FILES): init
 
@@ -58,16 +60,23 @@ $(DIST_FILE): $(DIST_DIR) $(SRC_FILES)
 	@echo "Combining source files"
 	@cat $(SRC_FILES) > $(DIST_FILE)
 
-$(DIST_MIN_FILE): $(DIST_FILE)
-	@echo "Building $(DIST_MIN_FILE)"
-	$(DO_MIN) --js $(DIST_FILE) > $(DIST_MIN_FILE)
-	@echo -n ""; \
-	FILE=$(subst $(DIST_DIR)/,,$(DIST_MIN_FILE)); \
-	( \
+$(TEMP_DIST_MIN_FILE): $(DIST_FILE)
+	@echo "Building $(DIST_TEMP_MIN_FILE)"
+	$(DO_MIN) --js $(DIST_FILE) > $(TEMP_DIST_MIN_FILE)
+
+$(DIST_MIN_FILE): $(TEMP_DIST_MIN_FILE)
+	@echo -n ""; (\
+		cd $(REPO_DIR) && \
+		git rm -q $(subst $(REPO_DIR)/,,$(SRC_FILES)) && \
+		git commit -m "remove un-minified files" && \
+		git checkout gh-pages && \
+		git merge -m "update non-js files" HEAD@{1} \
+	) || exit $$?; \
+	cp $(TEMP_DIST_MIN_FILE) $(DIST_MIN_FILE) && (\
 		cd $(DIST_DIR) && \
-		git ls-files -m | grep -F $$FILE > /dev/null && ( \
-		  git add $$FILE && \
+		git ls-files -m | grep -F $(TEMP_DIST_MIN_FILE) > /dev/null && ( \
+		  git add $(TEMP_DIST_MIN_FILE) && \
 		  git commit -m "update minified source" -q  && \
-		  git push -q || echo "auto-commit failed!"; \
+		  git push origin gh-pages -q || echo "auto-commit failed!"; \
 		) || echo "nothing changed"; \
-	);
+	) && echo done

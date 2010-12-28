@@ -41,13 +41,11 @@ init:
 		branch=$${BRANCHES[$$i]}; \
 		test -d $$repo || ( \
 			echo "Setting up $$repo with $$branch..."; \
-			git clone -s -b $$branch . $$repo > /dev/null \
-				|| exit $$?; \
+			git clone -s -b $$branch . $$repo > /dev/null; \
 		) && ( \
 			echo "Updating $$repo/$$branch"; \
 			cd $$repo && \
-			git pull > /dev/null \
-				|| exit $$?; \
+			git pull > /dev/null; \
 		); \
 	done
 

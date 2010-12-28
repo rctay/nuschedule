@@ -39,14 +39,14 @@ init:
 	for (( i = 0; i < $${#REPOS[*]}; i++ )); do \
 		repo=$${REPOS[$$i]}; \
 		branch=$${BRANCHES[$$i]}; \
-		test -d $$repo || ( \
-			echo "Setting up $$repo with $$branch..."; \
-			git clone -s -b $$branch . $$repo > /dev/null; \
-		) && ( \
+		test -d $$repo && ( \
 			echo "Updating $$repo/$$branch"; ( \
 				cd $$repo && \
 				git pull > /dev/null \
 			) \
+		) || ( \
+			echo "Setting up $$repo with $$branch..."; \
+			git clone -s -b $$branch . $$repo > /dev/null; \
 		); \
 	done
 

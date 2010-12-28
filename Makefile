@@ -43,9 +43,10 @@ init:
 			echo "Setting up $$repo with $$branch..."; \
 			git clone -s -b $$branch . $$repo > /dev/null; \
 		) && ( \
-			echo "Updating $$repo/$$branch"; \
-			cd $$repo && \
-			git pull > /dev/null; \
+			echo "Updating $$repo/$$branch"; ( \
+				cd $$repo && \
+				git pull > /dev/null \
+			) \
 		); \
 	done
 

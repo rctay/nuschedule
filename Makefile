@@ -73,7 +73,7 @@ $(DIST_MIN_FILE): $(TEMP_DIST_MIN_FILE)
 		cd $(REPO_DIR) && \
 		git rm -q $(subst $(REPO_DIR)/,,$(SRC_FILES)) && \
 		git commit -m "remove un-minified files" && \
-		git checkout gh-pages && \
+		git checkout -B gh-pages origin/gh-pages && \
 		git merge -m "update non-js files" HEAD@{1} \
 	) || exit $$?; \
 	cp $(TEMP_DIST_MIN_FILE) $(DIST_MIN_FILE) && (\

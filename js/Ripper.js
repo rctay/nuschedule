@@ -121,7 +121,7 @@ ret.prototype._send_request = function(url) {
 			NUSchedule.signals.send("on_module_rip_error", _ripper.rip_index);
 		},
 		success: function(data) {
-			if (data.indexOf("<strong>Module Information</strong>") != -1) {
+			if (data && data.indexOf("<strong>Module Information</strong>") != -1) {
 				// set the sPage
 				_ripper.sPage = data;
 				_ripper.$page = $(data);
@@ -324,7 +324,7 @@ ret.prototype.ripNext = function() {
 	} else {
 		$('#ripButton')
 		.val('Re-Scan All')
-		.mouseup(this.start)
+		.mouseup($.proxy(this.start, this))
 		.attr("disabled", false);
 
 		if (tt.module.length > 0) {

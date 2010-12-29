@@ -47,9 +47,13 @@ init:
 		) \
 	else \
 		echo "Setting up $(REPO_DIR) with $(SRC_BRANCH)..."; \
-		git clone -s -b $(SRC_BRANCH) . $(REPO_DIR) > /dev/null && \
-		git branch -m master \
+		git clone -s -b $(SRC_BRANCH) . $(REPO_DIR) > /dev/null \
 			|| exit $$?; \
+		(\
+			cd $(REPO_DIR) && \
+			git branch -m master \
+				|| exit $$?; \
+		) \
 	fi
 
 $(SRC_FILES): init

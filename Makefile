@@ -78,9 +78,12 @@ $(DIST_MIN_FILE): $(TEMP_DIST_MIN_FILE)
 	) || exit $$?; \
 	cp $(TEMP_DIST_MIN_FILE) $(DIST_MIN_FILE) && (\
 		cd $(DIST_DIR) && \
-		git ls-files -m | grep -F $(TEMP_DIST_MIN_FILE) > /dev/null && ( \
+		if git ls-files -m | grep -F $(TEMP_DIST_MIN_FILE) > /dev/null; then \
 		  git add $(TEMP_DIST_MIN_FILE) && \
-		  git commit -m "update minified source" -q  && \
-		  git push origin gh-pages -q || echo "auto-commit failed!"; \
-		) || echo "nothing changed"; \
+		  git commit -m "update minified source" \
+		    || exit $$?; \
+		else \
+			echo "nothing changed"; \
+		fi; \
+		git push origin gh-pages -q || echo "auto-commit failed!"; \
 	) && echo done

@@ -78,8 +78,9 @@ $(DIST_MIN_FILE): $(TEMP_DIST_MIN_FILE)
 	) || exit $$?; \
 	cp $(TEMP_DIST_MIN_FILE) $(DIST_MIN_FILE) && (\
 		cd $(DIST_DIR) && \
-		if git ls-files -m | grep -F $(TEMP_DIST_MIN_FILE) > /dev/null; then \
-		  git add $(TEMP_DIST_MIN_FILE) && \
+		FILE=$(subst $(DIST_DIR)/,,$(DIST_MIN_FILE)) && \
+		if git ls-files -m | grep -F $$FILE > /dev/null; then \
+		  git add $$FILE && \
 		  git commit -m "update minified source" \
 		    || exit $$?; \
 		else \

@@ -102,7 +102,7 @@ function page2_addBoxes() {
 		input.setAttribute('type', 'text');
 		input.setAttribute('maxlength','10');
 		input.id='code'+i;
-		input.className = 'txtbox';
+		input.className = 'module_code_box';
 
 		img.id = 'img'+i;
 

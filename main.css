@@ -91,7 +91,7 @@ div#page2 table{font-size:12px;}
 #boxes img{float:right;}
 #boxes div{float:left;border:1px solid #ccc;padding:5px;width:130px;margin:5px;}
 #boxes div h1{font-weight:normal;}
-.txtbox { width:100px;border:1px solid #ccc;padding:2px;font-family:verdana,sans-serif;font-size:12px;color:#777; }
+.module_code_box { width:100px;border:1px solid #ccc;padding:2px;font-family:verdana,sans-serif;font-size:12px;color:#777; }
 select{border:1px solid #ccc;}
 
 div#page3 { width:1000px;margin:30px auto;display:none; }

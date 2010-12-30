@@ -45,20 +45,8 @@ var get_module_url = (function() {
 	};
 })();
 
-/*
- * For each #code<n> field, call 'func' with
- *
- *  - the current count (n), and
- *  - the field passed to it (as a jQuery object).
- *
- * Iteration is stopped when 'func' returns true.
- */
-var _foreach_module_field = function(func) {
-	for (var i = 1; i <= MAX_RIP_INDEX; i++) {
-		if (func(i, $('#code' + i))) {
-			break;
-		}
-	}
+var select_module_boxes = function() {
+	return $("input.module_code_box");
 };
 
 /**
@@ -79,9 +67,10 @@ ret.prototype.start = function() {
 
 	//checking if one of them is not blank
 	var proceed = false;
-	_foreach_module_field(function(i, field) {
-		if (field.val() != '') {
-			return proceed = true;
+	select_module_boxes().each(function() {
+		if ($(this).val() != '') {
+			proceed = true;
+			return false;
 		}
 	});
 	if (proceed) {
@@ -91,9 +80,9 @@ ret.prototype.start = function() {
 		.attr("disabled", true);
 
 		$('#nextButton').hide();
-		_foreach_module_field(function(i, field) {
-			if (field.val() != '') {
-				NUSchedule.signals.send("on_module_rip_start", i);
+		select_module_boxes().each(function(i) {
+			if ($(this).val() != '') {
+				NUSchedule.signals.send("on_module_rip_start", i+1);
 			}
 		});
 

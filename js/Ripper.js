@@ -45,20 +45,13 @@ var get_module_url = (function() {
 	};
 })();
 
-/*
- * For each #code<n> field, call 'func' with
- *
- *  - the current count (n), and
- *  - the field passed to it (as a jQuery object).
- *
- * Iteration is stopped when 'func' returns true.
- */
-var _foreach_module_field = function(func) {
-	for (var i = 1; i <= MAX_RIP_INDEX; i++) {
-		if (func(i, $('#code' + i))) {
-			break;
-		}
-	}
+var select_module_boxes = function() {
+	return $("input.module_code_box");
+};
+
+var RipJob = function(index, data) {
+	this.index = index;
+	this.$data = $(data);
 };
 
 /**
@@ -75,33 +68,58 @@ ret.prototype.testApplication = function() {
 	this.auto_start = true;
 };
 
-ret.prototype.start = function() {
+ret.prototype._start = function() {
 
 	//checking if one of them is not blank
 	var proceed = false;
-	_foreach_module_field(function(i, field) {
-		if (field.val() != '') {
-			return proceed = true;
+	select_module_boxes().each(function() {
+		if ($(this).val() != '') {
+			proceed = true;
+			return false;
 		}
 	});
 	if (proceed) {
 		$('#ripButton')
 		.val('Waiting...')
-		.mouseup(function() { return false; })
 		.attr("disabled", true);
 
+		$(".button#re-rip-errors_button").hide();
 		$('#nextButton').hide();
-		_foreach_module_field(function(i, field) {
-			if (field.val() != '') {
-				NUSchedule.signals.send("on_module_rip_start", i);
-			}
-		});
+
+		this.rip_index = 1;
+		this.rip_errors = false;
 
 		//start ripping.
-		this.rip_index = 1;
 		tt.module = new Array();
 		this.rip();
 	}
+};
+
+ret.prototype.rip_all = function() {
+	this.to_rip = [];
+	this.ripped = [];
+
+	(function(ripper) {
+	select_module_boxes().each(function() {
+		var v = $(this).val();
+		if (v != '') {
+			ripper.to_rip.push(v);
+		}
+	});
+	})(this);
+
+	this._start();
+};
+
+ret.prototype.rip_errorneous = function() {
+	if (!this.to_rip || !this.to_rip.length || !this.ripped) {
+		throw new Error("haven't ripped before");
+	}
+	if (this.to_rip.length == this.ripped.length) {
+		// we ripped everything - that is, assuming no module codes changes
+		throw new Error("no errorneous modules to rip");
+	}
+	this._start();
 };
 
 /*
@@ -112,31 +130,38 @@ ret.prototype.start = function() {
 ret.prototype._send_request = function(url) {
 	this.url = url;
 
-	var _ripper = this;
-	$.ajax({
+	$.ajax(
+	(function(_ripper, index) {
+	return {
 		// default, but be explicit
 		type: "GET",
-		url: this.url,
+		url: _ripper.url,
 		error: function() {
-			NUSchedule.signals.send("on_module_rip_error", _ripper.rip_index);
+			NUSchedule.signals.send("on_module_rip_error", index);
 		},
 		success: function(data) {
 			if (data && data.indexOf("<strong>Module Information</strong>") != -1) {
-				// set the sPage
-				_ripper.sPage = data;
-				_ripper.$page = $(data);
-				_ripper.getModule();
-				NUSchedule.signals.send("on_module_rip_success", _ripper.rip_index);
+				_ripper.to_rip[index - 1] = null;
+				_ripper.ripped.push(new RipJob(index, data));
+				NUSchedule.signals.send("on_module_rip_success", index);
 			} else {
-				NUSchedule.signals.send("on_module_rip_error", _ripper.rip_index);
+				NUSchedule.signals.send("on_module_rip_error", index);
 			}
 			_ripper.ripNext();
 		}
-	});
+	};
+	})(this, this.rip_index));
 };
 
 ret.prototype.rip = function() {
-	var code = $('#code' + this.rip_index).val().toUpperCase();
+	// rip_index is 1-based
+	var code = this.to_rip[this.rip_index - 1];
+	if (!code) {
+		this.ripNext();
+		return;
+	}
+
+	code = code.toUpperCase();
 	var ay = $('#ay').val();
 	var semester = $('#semester').val();
 
@@ -147,19 +172,15 @@ ret.prototype.rip = function() {
 	}*/
 
 	//give ripper's url to current url
-	if (code != '') { //if not empty, do ripping
-		this._send_request(get_module_url(ay, semester, code));
-	} else {
-		NUSchedule.signals.send("on_module_rip_blank", this.rip_index);
-		this.ripNext();
-	}
+	NUSchedule.signals.send("on_module_rip_start", this.rip_index);
+	this._send_request(get_module_url(ay, semester, code));
 };
 
-ret.prototype.getModule = function () {
+ret.prototype.getModule = function (job) {
 	/** All regex into XPath / jQuery selectors **/
 	/** Benchmark speed? **/
 	// var $moduleInfoTable = $("table:first>tbody>tr:eq(1)>td>table>tbody>tr:eq(2)>td>table>tbody", this.$page);
-	var $moduleInfoTable = $("table.tableframe:eq(0)", this.$page);
+	var $moduleInfoTable = $("table.tableframe:eq(0)", job.$data);
 
 	//ripping module code
 	var moduleCode =
@@ -172,10 +193,10 @@ ret.prototype.getModule = function () {
 		$("tr:eq(5)>td:eq(1)", $moduleInfoTable).text().trim().replace(/\s+(A|P)M$/, "");
 
 	//ripping lecture, tutorial and laboratory.
-	var arrLecture = this.ripLecture();
+	var arrLecture = this.ripLecture(job);
 	var arrTutorial = new Array();
 	var arrLaboratory = new Array();
-	var arrTutLab = this.ripTutorial();
+	var arrTutLab = this.ripTutorial(job);
 
 	for (var i = 0; i < arrTutLab.length; i++) {
 		if (arrTutLab[i].type == 'lab') arrLaboratory.push(arrTutLab[i]);
@@ -194,9 +215,9 @@ ret.prototype.getModule = function () {
 	tt.module.push(oModule);
 };
 
-ret.prototype.ripLecture = function() {
+ret.prototype.ripLecture = function(job) {
 
-	var $lectureTable = $("table.tableframe:eq(0) ~ table:eq(0)", this.$page);
+	var $lectureTable = $("table.tableframe:eq(0) ~ table:eq(0)", job.$data);
 
 	var arrLecture = new Array();
 
@@ -258,9 +279,9 @@ ret.prototype.ripLecture = function() {
 	return arrLecture;
 };
 
-ret.prototype.ripTutorial = function() {
+ret.prototype.ripTutorial = function(job) {
 
-	var $tutorialTable = $("table.tableframe:eq(0) ~ table:eq(1)", this.$page);
+	var $tutorialTable = $("table.tableframe:eq(0) ~ table:eq(1)", job.$data);
 
 	var arrTutorial = new Array();
 
@@ -319,28 +340,51 @@ ret.prototype.ripTutorial = function() {
 
 ret.prototype.ripNext = function() {
 
-	if (++this.rip_index <= MAX_RIP_INDEX) {
+	if (this.to_rip && ++this.rip_index <= this.to_rip.length) {
 		this.rip();
 	} else {
-		$('#ripButton')
-		.val('Re-Scan All')
-		.mouseup($.proxy(this.start, this))
-		.attr("disabled", false);
+		this.rip_finish();
+	}
+};
 
-		if (tt.module.length > 0) {
-			//show NEXT button if module>0
-			$("#nextButton").show();
-		}
-		if (this.auto_start) {
-			tt.createTable();
-			tt.createAllNode();
-			st.showSetFunctions();
-			showPage3();
-			setTimeout("alert('Here you are. Happy testing! :)')", 900);
-		}
+ret.prototype.rip_finish = function() {
+	$('#ripButton')
+	.val('Re-Scan All')
+	.attr("disabled", false);
+
+	if (!this.ripped) { return; }
+
+	if (this.rip_errors) {
+		$(".button#re-rip-errors_button").show();
 	}
 
+	if (this.ripped.length) {
+		//show NEXT button if module>0
+		$("#nextButton").show();
+	}
+
+	if (this.auto_start) {
+		this.parse();
+		setTimeout("alert('Here you are. Happy testing! :)')", 900);
+	}
 };
+
+ret.prototype.parse = function() {
+	if (!this.ripped) { return; }
+
+	while (this.ripped.length) {
+		this.getModule(this.ripped.pop());
+	}
+
+	tt.createTable();
+	tt.createAllNode();
+	st.showSetFunctions();
+	showPage3();
+};
+
+NUSchedule.signals.register("on_module_rip_error", function() {
+	ripper.rip_errors |= true;
+});
 
 // expose MAX_RIP_INDEX
 ret.MAX_RIP_INDEX = MAX_RIP_INDEX;

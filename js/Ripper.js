@@ -90,11 +90,11 @@ ret.prototype.start = function() {
 		this.ripped = [];
 
 		(function(ripper) {
-		select_module_boxes().each(function(i) {
+		select_module_boxes().each(function() {
 			var v = $(this).val();
 			if (v != '') {
 				ripper.to_rip.push(v);
-				NUSchedule.signals.send("on_module_rip_start", i+1);
+
 			}
 		});
 		})(this);
@@ -155,6 +155,7 @@ ret.prototype.rip = function() {
 	}*/
 
 	//give ripper's url to current url
+	NUSchedule.signals.send("on_module_rip_start", this.rip_index);
 	this._send_request(get_module_url(ay, semester, code));
 };
 

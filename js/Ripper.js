@@ -76,7 +76,6 @@ ret.prototype.start = function() {
 	if (proceed) {
 		$('#ripButton')
 		.val('Waiting...')
-		.mouseup(function() { return false; })
 		.attr("disabled", true);
 
 		$('#nextButton').hide();
@@ -317,7 +316,6 @@ ret.prototype.ripNext = function() {
 	} else {
 		$('#ripButton')
 		.val('Re-Scan All')
-		.mouseup($.proxy(this.start, this))
 		.attr("disabled", false);
 
 		if (tt.module.length > 0) {

@@ -72,8 +72,9 @@
 					<h6 style="margin-bottom:10px;">Click <span style="color:#fff">Start Ripping</span> when you have done.<br/>Click <span style="color:#fff">Next</span> if you are ready to start the application, or click <span style="color:#fff">Re-Scan All</span> if you want to re-scan any invalid links</h6>
 
 
-					<p><input type="button" id="ripButton" onmouseup="ripper.start()" value="Start Ripping" class="button" />
-					<input type="button" id="nextButton" onclick="tt.createTable();tt.createAllNode();st.showSetFunctions();showPage3();this.onclick=''" value="Next" class="button" style="display:none" /></p>
+					<p><input type="button" id="ripButton" onmouseup="ripper.rip_all()" value="Start Ripping" class="button" />
+					<input type="button" id="re-rip-errors_button" onclick="ripper.rip_errorneous()" value="Re-Scan Errorneous" class="button" />
+					<input type="button" id="nextButton" onclick="ripper.parse();this.onclick=''" value="Next" class="button" style="display:none" /></p>
 				</div>
 			</div>
 		</div>

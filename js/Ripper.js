@@ -112,13 +112,14 @@ ret.prototype.start = function() {
 ret.prototype._send_request = function(url) {
 	this.url = url;
 
-	var _ripper = this;
-	$.ajax({
+	$.ajax(
+	(function(_ripper, index) {
+	return {
 		// default, but be explicit
 		type: "GET",
 		url: this.url,
 		error: function() {
-			NUSchedule.signals.send("on_module_rip_error", _ripper.rip_index);
+			NUSchedule.signals.send("on_module_rip_error", index);
 		},
 		success: function(data) {
 			if (data && data.indexOf("<strong>Module Information</strong>") != -1) {
@@ -126,13 +127,14 @@ ret.prototype._send_request = function(url) {
 				_ripper.sPage = data;
 				_ripper.$page = $(data);
 				_ripper.getModule();
-				NUSchedule.signals.send("on_module_rip_success", _ripper.rip_index);
+				NUSchedule.signals.send("on_module_rip_success", index);
 			} else {
-				NUSchedule.signals.send("on_module_rip_error", _ripper.rip_index);
+				NUSchedule.signals.send("on_module_rip_error", index);
 			}
 			_ripper.ripNext();
 		}
-	});
+	};
+	})(this, this.rip_index));
 };
 
 ret.prototype.rip = function() {

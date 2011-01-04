@@ -68,7 +68,7 @@ ret.prototype.testApplication = function() {
 	this.auto_start = true;
 };
 
-ret.prototype.start = function() {
+ret.prototype._start = function() {
 
 	//checking if one of them is not blank
 	var proceed = false;
@@ -83,26 +83,43 @@ ret.prototype.start = function() {
 		.val('Waiting...')
 		.attr("disabled", true);
 
+		$(".button#re-rip-errors_button").hide();
 		$('#nextButton').hide();
 
-		this.to_rip = [];
 		this.rip_index = 1;
-		this.ripped = [];
-
-		(function(ripper) {
-		select_module_boxes().each(function() {
-			var v = $(this).val();
-			if (v != '') {
-				ripper.to_rip.push(v);
-
-			}
-		});
-		})(this);
+		this.rip_errors = false;
 
 		//start ripping.
 		tt.module = new Array();
 		this.rip();
 	}
+};
+
+ret.prototype.rip_all = function() {
+	this.to_rip = [];
+	this.ripped = [];
+
+	(function(ripper) {
+	select_module_boxes().each(function() {
+		var v = $(this).val();
+		if (v != '') {
+			ripper.to_rip.push(v);
+		}
+	});
+	})(this);
+
+	this._start();
+};
+
+ret.prototype.rip_errorneous = function() {
+	if (!this.to_rip || !this.to_rip.length || !this.ripped) {
+		throw new Error("haven't ripped before");
+	}
+	if (this.to_rip.length == this.ripped.length) {
+		// we ripped everything - that is, assuming no module codes changes
+		throw new Error("no errorneous modules to rip");
+	}
+	this._start();
 };
 
 /*
@@ -124,6 +141,7 @@ ret.prototype._send_request = function(url) {
 		},
 		success: function(data) {
 			if (data && data.indexOf("<strong>Module Information</strong>") != -1) {
+				_ripper.to_rip[index - 1] = null;
 				_ripper.ripped.push(new RipJob(index, data));
 				NUSchedule.signals.send("on_module_rip_success", index);
 			} else {
@@ -139,7 +157,6 @@ ret.prototype.rip = function() {
 	// rip_index is 1-based
 	var code = this.to_rip[this.rip_index - 1];
 	if (!code) {
-		NUSchedule.signals.send("on_module_rip_blank", this.rip_index);
 		this.ripNext();
 		return;
 	}
@@ -337,6 +354,10 @@ ret.prototype.rip_finish = function() {
 
 	if (!this.ripped) { return; }
 
+	if (this.rip_errors) {
+		$(".button#re-rip-errors_button").show();
+	}
+
 	if (this.ripped.length) {
 		//show NEXT button if module>0
 		$("#nextButton").show();
@@ -360,6 +381,10 @@ ret.prototype.parse = function() {
 	st.showSetFunctions();
 	showPage3();
 };
+
+NUSchedule.signals.register("on_module_rip_error", function() {
+	ripper.rip_errors |= true;
+});
 
 // expose MAX_RIP_INDEX
 ret.MAX_RIP_INDEX = MAX_RIP_INDEX;

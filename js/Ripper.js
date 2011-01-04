@@ -136,7 +136,14 @@ ret.prototype._send_request = function(url) {
 };
 
 ret.prototype.rip = function() {
-	var code = $('#code' + this.rip_index).val().toUpperCase();
+	var code = $('#code' + this.rip_index).val();
+	if (!code) {
+		NUSchedule.signals.send("on_module_rip_blank", this.rip_index);
+		this.ripNext();
+		return;
+	}
+
+	code = code.toUpperCase();
 	var ay = $('#ay').val();
 	var semester = $('#semester').val();
 
@@ -147,12 +154,7 @@ ret.prototype.rip = function() {
 	}*/
 
 	//give ripper's url to current url
-	if (code != '') { //if not empty, do ripping
-		this._send_request(get_module_url(ay, semester, code));
-	} else {
-		NUSchedule.signals.send("on_module_rip_blank", this.rip_index);
-		this.ripNext();
-	}
+	this._send_request(get_module_url(ay, semester, code));
 };
 
 ret.prototype.getModule = function () {

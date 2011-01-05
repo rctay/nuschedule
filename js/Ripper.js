@@ -49,9 +49,61 @@ var select_module_boxes = function() {
 	return $("input.module_code_box");
 };
 
-var RipJob = function(index, data) {
-	this.index = index;
-	this.$data = $(data);
+var RipJobs = function() {
+	(function(q) {
+	NUSchedule.signals.register("on_module_rip_success", function(index) {
+		q.finish_job(index, true);
+	});
+	NUSchedule.signals.register("on_module_rip_error", function(index) {
+		q.finish_job(index, false);
+	});
+	})(this);
+
+	this.reset();
+};
+
+RipJobs.prototype.reset = function() {
+	this.to_rip = [];
+	this.ripped = [];
+	this.ripped_bad = [];
+	this.job = null;
+};
+
+RipJobs.prototype.add_job = function(index, code) {
+	this.to_rip.push({index: index, code: code});
+};
+
+RipJobs.prototype.next = function() {
+	if (!this.to_rip.length) { return null; }
+
+	var job = this.to_rip[0];
+	this.job = job;
+	return job;
+};
+
+RipJobs.prototype._append = function(q, items) {
+	var args = [q.length, 0];
+	args = args.concat(items);
+	q.splice.apply(q, args);
+};
+
+RipJobs.prototype.finish_job = function(index, is_success) {
+	var i = this.to_rip.length;
+	while (i--) {
+		if (this.to_rip[i]["index"] == index) {
+			this._append((is_success ? this.ripped : this.ripped_bad), this.to_rip.splice(i, 1));
+			return true;
+		}
+	}
+	return false;
+};
+
+RipJobs.prototype.has_job = function() {
+	return this.to_rip.length > 0;
+};
+
+RipJobs.prototype.has_errors = function() {
+	return this.ripped_bad.length > 0;
 };
 
 /**
@@ -61,6 +113,7 @@ var ret = function() {
 	this.url = '';
 	this.sPage = '';
 	this.auto_start = false;
+	this.job_queue = new RipJobs();
 };
 
 ret.prototype.testApplication = function() {
@@ -86,24 +139,21 @@ ret.prototype._start = function() {
 		$(".button#re-rip-errors_button").hide();
 		$('#nextButton').hide();
 
-		this.rip_index = 1;
-		this.rip_errors = false;
-
 		//start ripping.
-		tt.module = new Array();
 		this.rip();
 	}
 };
 
 ret.prototype.rip_all = function() {
-	this.to_rip = [];
-	this.ripped = [];
+	this.job_queue.reset();;
+
+	tt.module = new Array();
 
 	(function(ripper) {
-	select_module_boxes().each(function() {
+	select_module_boxes().each(function(i) {
 		var v = $(this).val();
 		if (v != '') {
-			ripper.to_rip.push(v);
+			ripper.job_queue.add_job(i + 1, v);
 		}
 	});
 	})(this);
@@ -112,13 +162,11 @@ ret.prototype.rip_all = function() {
 };
 
 ret.prototype.rip_errorneous = function() {
-	if (!this.to_rip || !this.to_rip.length || !this.ripped) {
-		throw new Error("haven't ripped before");
-	}
-	if (this.to_rip.length == this.ripped.length) {
+	if (!this.job_queue.has_errors()) {
 		// we ripped everything - that is, assuming no module codes changes
 		throw new Error("no errorneous modules to rip");
 	}
+	this.job_queue.to_rip = this.job_queue.ripped_bad.splice(0);
 	this._start();
 };
 
@@ -141,8 +189,7 @@ ret.prototype._send_request = function(url) {
 		},
 		success: function(data) {
 			if (data && data.indexOf("<strong>Module Information</strong>") != -1) {
-				_ripper.to_rip[index - 1] = null;
-				_ripper.ripped.push(new RipJob(index, data));
+				_ripper.getModule($(data));
 				NUSchedule.signals.send("on_module_rip_success", index);
 			} else {
 				NUSchedule.signals.send("on_module_rip_error", index);
@@ -150,18 +197,18 @@ ret.prototype._send_request = function(url) {
 			_ripper.ripNext();
 		}
 	};
-	})(this, this.rip_index));
+	})(this, this.job_queue.job.index));
 };
 
 ret.prototype.rip = function() {
 	// rip_index is 1-based
-	var code = this.to_rip[this.rip_index - 1];
-	if (!code) {
+	var job = this.job_queue.next();
+	if (!job || !job.code) {
 		this.ripNext();
 		return;
 	}
 
-	code = code.toUpperCase();
+	var code = job.code.toUpperCase();
 	var ay = $('#ay').val();
 	var semester = $('#semester').val();
 
@@ -172,15 +219,15 @@ ret.prototype.rip = function() {
 	}*/
 
 	//give ripper's url to current url
-	NUSchedule.signals.send("on_module_rip_start", this.rip_index);
+	NUSchedule.signals.send("on_module_rip_start", job.index);
 	this._send_request(get_module_url(ay, semester, code));
 };
 
-ret.prototype.getModule = function (job) {
+ret.prototype.getModule = function ($page) {
 	/** All regex into XPath / jQuery selectors **/
 	/** Benchmark speed? **/
 	// var $moduleInfoTable = $("table:first>tbody>tr:eq(1)>td>table>tbody>tr:eq(2)>td>table>tbody", this.$page);
-	var $moduleInfoTable = $("table.tableframe:eq(0)", job.$data);
+	var $moduleInfoTable = $("table.tableframe:eq(0)", $page);
 
 	//ripping module code
 	var moduleCode =
@@ -193,10 +240,10 @@ ret.prototype.getModule = function (job) {
 		$("tr:eq(5)>td:eq(1)", $moduleInfoTable).text().trim().replace(/\s+(A|P)M$/, "");
 
 	//ripping lecture, tutorial and laboratory.
-	var arrLecture = this.ripLecture(job);
+	var arrLecture = this.ripLecture($page);
 	var arrTutorial = new Array();
 	var arrLaboratory = new Array();
-	var arrTutLab = this.ripTutorial(job);
+	var arrTutLab = this.ripTutorial($page);
 
 	for (var i = 0; i < arrTutLab.length; i++) {
 		if (arrTutLab[i].type == 'lab') arrLaboratory.push(arrTutLab[i]);
@@ -215,9 +262,9 @@ ret.prototype.getModule = function (job) {
 	tt.module.push(oModule);
 };
 
-ret.prototype.ripLecture = function(job) {
+ret.prototype.ripLecture = function($page) {
 
-	var $lectureTable = $("table.tableframe:eq(0) ~ table:eq(0)", job.$data);
+	var $lectureTable = $("table.tableframe:eq(0) ~ table:eq(0)", $page);
 
 	var arrLecture = new Array();
 
@@ -279,9 +326,9 @@ ret.prototype.ripLecture = function(job) {
 	return arrLecture;
 };
 
-ret.prototype.ripTutorial = function(job) {
+ret.prototype.ripTutorial = function($page) {
 
-	var $tutorialTable = $("table.tableframe:eq(0) ~ table:eq(1)", job.$data);
+	var $tutorialTable = $("table.tableframe:eq(0) ~ table:eq(1)", $page);
 
 	var arrTutorial = new Array();
 
@@ -339,8 +386,7 @@ ret.prototype.ripTutorial = function(job) {
 };
 
 ret.prototype.ripNext = function() {
-
-	if (this.to_rip && ++this.rip_index <= this.to_rip.length) {
+	if (this.job_queue.has_job()) {
 		this.rip();
 	} else {
 		this.rip_finish();
@@ -352,39 +398,29 @@ ret.prototype.rip_finish = function() {
 	.val('Re-Scan All')
 	.attr("disabled", false);
 
-	if (!this.ripped) { return; }
+	if (!this.job_queue.ripped.length) { return; }
 
-	if (this.rip_errors) {
+	if (this.job_queue.has_errors()) {
 		$(".button#re-rip-errors_button").show();
 	}
 
-	if (this.ripped.length) {
+	if (tt.module.length) {
 		//show NEXT button if module>0
 		$("#nextButton").show();
 	}
 
 	if (this.auto_start) {
-		this.parse();
+		this.display_timetable();
 		setTimeout("alert('Here you are. Happy testing! :)')", 900);
 	}
 };
 
-ret.prototype.parse = function() {
-	if (!this.ripped) { return; }
-
-	while (this.ripped.length) {
-		this.getModule(this.ripped.pop());
-	}
-
+ret.prototype.display_timetable = function() {
 	tt.createTable();
 	tt.createAllNode();
 	st.showSetFunctions();
 	showPage3();
 };
-
-NUSchedule.signals.register("on_module_rip_error", function() {
-	ripper.rip_errors |= true;
-});
 
 // expose MAX_RIP_INDEX
 ret.MAX_RIP_INDEX = MAX_RIP_INDEX;
